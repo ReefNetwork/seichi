@@ -24,6 +24,8 @@ class FormManager
 
     static public function FormReceive($pT, $ev)
     {
+        return;
+
         $p = $ev->getPlayer();
         $n = $p->getName();
         $pk = $ev->getPacket();

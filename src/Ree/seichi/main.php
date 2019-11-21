@@ -1,25 +1,51 @@
 <?php
 
+/*
+ * _____                  _
+ *|  __ \                (_)
+ *| |__) |___  ___ ______ _ _ __
+ *|  _  // _ \/ _ \______| | '_ \
+ *| | \ \  __/  __/      | | |_) |
+ *|_|  \_\___|\___|      | | .__/
+ *                      _/ | |
+ *                     |__/|_|
+ *
+ * Seichi MainCore
+ *
+ * @copyright 2019 Ree_jp
+ */
+
 namespace Ree\seichi;
 
-
+use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerItemConsumeEvent;
+use pocketmine\inventory\PlayerInventory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
 use pocketmine\Server;
 use pocketmine\item\Item;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
-use pocketmine\inventory\DoubleChestInventory;
 
-use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
-use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 
+use Ree\reef\ReefAPI;
+use Ree\seichi\skil\background\BreakMana;
+use Ree\seichi\Task\InventoryUpdateTask;
+use Ree\seichi\Task\ScoreBoardTask;
+use Ree\seichi\Task\TeleportTask;
+use Ree\seichi\Task\Transfer;
+use Ree\StackStrage\ChestGuiManager;
+use Ree\StackStrage\StackStrage_API;
+use Ree\StackStrage\Virchal\Dust;
+use Ree\StackStrage\Virchal\SkilSelect;
+use Ree\StackStrage\Virchal\StackStrage;
+use Ree\StackStrage\Virchal\WorldSelect;
 
 
 class main extends PluginBase implements listener
@@ -27,30 +53,45 @@ class main extends PluginBase implements listener
     private const lobby = "lobby";
     private const form = "ModalFormResponsePacket";
 
+    /**
+     * @var PlayerTask[]
+     */
+    public $pT;
+
+    /**
+     * @var main
+     */
     private static $main;
+
+    /**
+     * @var Config
+     */
+    private $strage;
+
+    /**
+     * @var Config
+     */
+    private $data;
 
     public function onEnable()
     {
-        echo "Seichi_core>>loading now...\n";
+        echo "Reef_core >> loading now...\n";
         date_default_timezone_set('Asia/Tokyo');
         self::$main = $this;
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        $this->level = new Config($this->getDataFolder() . "user_level.yml", Config::YAML);
-        $this->skil = new Config($this->getDataFolder() . "user_skil.yml", Config::YAML);
-        $this->mana = new config($this->getDataFolder() . "user_mana.yml", Config::YAML);
-        $this->coin = new Config($this->getDataFolder() . "user_coin.yml", Config::YAML);
         $this->strage = new Config($this->getDataFolder() . "user_strage.yml", Config::YAML);
         $this->data = new Config($this->getDataFolder() . "user_data.yml", Config::YAML);
         $this->getServer()->loadLevel("lobby");
         $this->getServer()->loadLevel("leveling_1");
-        sleep(1);
-        echo "Seichi_core>>complete\n";
+        $this->getServer()->loadLevel("public");
+        echo "Reef_core >> Complete\n";
     }
 
     public function onDisable()
     {
-        foreach (Server::getInstance()->getOnlinePlayers() as $p)
-        {
+        echo "seichi >> Saving data...\n";
+
+        foreach (Server::getInstance()->getOnlinePlayers() as $p) {
 
         }
 
@@ -58,8 +99,7 @@ class main extends PluginBase implements listener
             $p->kick("§a✔ Saving player data and exiting server...", false);
             sleep(1);
         }
-
-        echo "Seichi>>disable...\n";
+        echo "seichi >> Complete\n";
     }
 
     public function onJoin(PlayerJoinEvent $ev)
@@ -68,118 +108,184 @@ class main extends PluginBase implements listener
         $n = $p->getName();
         $pT = new PlayerTask($p);
 
-        if ($this->level->exists($n)) {
-            $pT->s_level = $this->level->get($n);
-            $pT->s_skil = $this->skil->get($n);
-            $pT->s_mana = $this->mana->get($n);
-            $pT->s_coin = $this->coin->get($n);
+        if ($this->data->exists($n)) {
             $pT->s_strage = $this->strage->get($n);
-            $pT->s_data = $this->data->get($n);
-            $ev->setJoinMessage("§ajoin>>" . $n);
+            $pT->setData($this->data->get($n));
+
             $pT->sendLog("plyaerデータを所得しました");
         } else {
-            $ev->setJoinMessage("§bnewjoin>>" . $n);
             $p->addActionBarMessage("plyaerデータが見つからんかったためデータをデフォルトに適用します");
             $pT->sendLog("plyaerデータが見つからんかったためデータをデフォルトに適用します");
+            $p->getInventory()->addItem(Item::get(Item::DIAMOND_PICKAXE));
+            $p->getInventory()->addItem(Item::get(Item::DIAMOND_AXE));
+            $p->getInventory()->addItem(Item::get(Item::DIAMOND_SHOVEL));
+            $p->getInventory()->addItem(Item::get(Item::BAKED_POTATO, 0, 64));
+            $pT->sendLog("初期装備が付与されました");
+            $pT->sendLog("Setting::[HIDE]ServerLog");
+            $p->sendMessage("SeverLogをhideにしました");
         }
-
         $this->pT[$n] = $pT;
+        $pT->task["InventoryUpdateTask"] = $this->getScheduler()->scheduleRepeatingTask(new InventoryUpdateTask($pT), 50)->getTaskId();
+        $pT->task["ScoreBoardTask"] = $this->getScheduler()->scheduleRepeatingTask(new ScoreBoardTask($pT), 10)->getTaskId();
 
-        for ($i = 9; $i <= 35; $i++) {
-            $item = Item::get(106, 0, 1);
-            $item->setCustomName("§0");
-            $p->getInventory()->setItem($i, $item);
-        }
-        $item = Item::get(54, 0, 1);
-        $item->setCustomName("StackStrage_β");
-        $p->getInventory()->setItem(19, $item);
-
-        $item = Item::get(340, 0, 1);
-        $item->setCustomName("スキル設定");
-        $p->getInventory()->setItem(20, $item);
-
-        $item = Item::get(345, 0, 1);
-        $item->setCustomName("ワールド移動");
-        $p->getInventory()->setItem(24, $item);
-
-        $item = Item::get(138, 0, 1);
-        $item->setCustomName("スポーン地点に戻る");
-        $p->getInventory()->setItem(25, $item);
-
-        $item = Item::get(325, 10, 1);
-        $item->setCustomName("ゴミ箱");
-        $p->getInventory()->setItem(28, $item);
-
-        $item = Item::get(387, 0, 1);
-        $item->setCustomName("チャットを送信する(未実装)");
-        $p->getInventory()->setItem(29, $item);
-
-        $item = Item::get(106, 0, 1);
-        $item->setCustomName($n);
-        $p->getInventory()->setItem(35, $item);
-
-        $pT->sendBar();
+        $pT->updateInventory();
+        $pT->createBar();
         $pT->sendScore();
+        $p->addTitle("Welcom to Server", "Reef network β");
     }
 
     public function onQuit(PlayerQuitEvent $ev)
     {
         $p = $ev->getPlayer();
         $n = $p->getName();
-        $pT = $this->pT[$n];
+        $pT = self::getpT($n);
 
-        $this->level->set($n, $pT->s_level);
-        $this->skil->set($n, $pT->s_skil);
-        $this->mana->set($n, $pT->s_mana);
-        $this->coin->set($n, $pT->s_coin);
+        $this->getScheduler()->cancelTask($pT->task["InventoryUpdateTask"]);
+        $this->getScheduler()->cancelTask($pT->task["ScoreBoardTask"]);
+
         $this->strage->set($n, $pT->s_strage);
-        $this->data->set($n, $pT->s_data);
-        $this->level->save();
-        $this->skil->save();
-        $this->mana->save();
-        $this->coin->save();
+        $this->data->set($n, $pT->getData());
+        $this->strage->save();
         $this->data->save();
+    }
 
-        switch ($ev->getQuitReason()) {
-            case "Internal server error":
-                $ev->setQuitMessage("§cInternal Server Error<<" . $n . "\n鯖主に連絡してください");
-                break;
-            case "client disconnect":
-                $ev->setQuitMessage("§eQuit<<" . $n);
-                break;
-            default:
-                $ev->setQuitMessage("§cUnknow[" . $ev->getQuitReason() . "§c]<<" . $n);
+    public function onEat(PlayerItemConsumeEvent $ev)
+    {
+        $p = $ev->getPlayer();
+        $n = $p->getName();
+        $pT = self::getpT($n);
+        $item = $ev->getItem();
 
+        $nbt = $item->getNamedTag();
+        if ($nbt->offsetExists(Gatya::GATYA))
+        {
+            switch ($nbt->getInt(Gatya::GATYA))
+            {
+                case Gatya::APPLE1:
+                    $mana = $pT->s_mana + 200;
+                    if ($mana > $pT->getMaxmana())
+                    {
+                        $pT->s_mana = $pT->getMaxmana();
+                    }else{
+                        $pT->s_mana = $mana;
+                    }
+                    break;
+
+                case Gatya::APPLE2:
+                    $mana = $pT->s_mana + 1200;
+                    if ($mana > $pT->getMaxmana())
+                    {
+                        $pT->s_mana = $pT->getMaxmana();
+                    }else{
+                        $pT->s_mana = $mana;
+                    }
+                    break;
+
+                case Gatya::APPLE3:
+                    $mana = $pT->s_mana + 6200;
+                    if ($mana > $pT->getMaxmana())
+                    {
+                        $pT->s_mana = $pT->getMaxmana();
+                    }else{
+                        $pT->s_mana = $mana;
+                    }
+                    break;
+            }
+            $pT->sendBar();
         }
     }
 
+    /**
+     * @param BlockBreakEvent $ev
+     */
     public function onBreak(BlockBreakEvent $ev)
     {
         $p = $ev->getPlayer();
         $n = $p->getName();
-        $pT = $this->pT[$n];
+        $pT = self::getpT($n);
 
-        if ($p->getlevel()->getName() == self::lobby) {
-            $p->addActionBarMessage("§4Hey! §rSorry, but you can't break that block here.");
-            $ev->setCancelled();
-            $pT->sendLog("ブロックの破壊をキャンセルしました");
-        } else {
-            $pT->onBreak($ev->getBlock());
+        if (!ReefAPI::isProtect($ev->getBlock()->asPosition())) {
+            return;
         }
+        if ($ev->getBlock()->getId() == 0) {
+            $ev->setCancelled();
+            return;
+        }
+        if ($pT->s_running) {
+            foreach ($ev->getDrops() as $drop) {
+                StackStrage_API::add($p, $drop);
+            }
+            $ev->setDrops([]);
+            $pT->addxp($ev->getBlock()->asVector3());
+            $pT->addCoin(0.01);
+            return;
+        }
+
+        BreakMana::onBreak($pT);
+        if ($pT->s_mana >= $pT->s_nowSkil->getMana()) {
+            $pT->s_mana = $pT->s_mana - $pT->s_nowSkil->getMana();
+            $pT->sendBar();
+            $pT->addCoin(0.1);
+        } else {
+            $p->sendTip("§cSkil発動に必要なマナが足りません");
+            $pT->addxp($ev->getBlock()->asVector3());
+            foreach ($ev->getDrops() as $drop) {
+                StackStrage_API::add($p, $drop);
+            }
+            $ev->setDrops([]);
+            $pT->addCoin(0.1);
+            return;
+        }
+
+        if ($pT->onbreak($ev->getBlock(), $ev->getItem())) {
+            foreach ($ev->getDrops() as $drop) {
+                StackStrage_API::add($p, $drop);
+            }
+            $pT->addxp($ev->getBlock()->asVector3());
+            $ev->setDrops([]);
+            return;
+        }
+        $pT->errer("line" . __LINE__ . " break処理に失敗しました", $this);
+        $ev->setCancelled();
     }
 
+    /**
+     * @param BlockPlaceEvent $ev
+     */
     public function onPlace(BlockPlaceEvent $ev)
     {
         $p = $ev->getPlayer();
         $n = $p->getName();
-        $pT = $this->pT[$n];
+        $pT = self::getpT($n);
 
-        if ($p->getlevel()->getName() == self::lobby) {
-            $p->addActionBarMessage("§4Hey! §rSorry, but you can't place that block here.");
+        if ($ev->getItem()->getId() == Item::MOB_HEAD) {
+            $p->addActionBarMessage("§4Hey! §rSorry, but you can't place that block.");
             $ev->setCancelled();
-            $pT->sendLog("ブロックの設置をキャンセルしました");
-        } else {
-            $pT->onBreak($ev->getBlock());
+            return;
+        }
+    }
+
+    public function onTuch(PlayerInteractEvent $ev)
+    {
+        $p = $ev->getPlayer();
+        $n = $p->getName();
+        $pT = self::getpT($n);
+        $item = $ev->getItem();
+
+        if ($ev->getItem()->getId() == Item::MOB_HEAD) {
+            $tag = $item->getNamedTag();
+            if ($tag->offsetExists(Gatya::GATYA))
+            {
+                $bool = Gatya::onGatya($p);
+                if ($bool)
+                {
+                    $item->setCount(1);
+                    $p->getInventory()->removeItem($item);
+                    $p->sendTip("§aガチャを引きました");
+                }else{
+                    $p->sendTip("§cインベントリがいっぱいです");
+                }
+            }
         }
     }
 
@@ -187,76 +293,98 @@ class main extends PluginBase implements listener
     {
         $tr = $ev->getTransaction();
         $inve = $tr->getInventories();
-        $cansel = false;
+
 
         foreach ($inve as $inv) {
             foreach ($tr->getActions() as $action) {
                 if ($action instanceof SlotChangeAction) {
-                    if ($action->getInventory() instanceof DoubleChestInventory) {
-                        $p = $action->getInventory()->getViewers();
-                        $item = $action->getInventory()->getItem($action->getSlot());
 
-                        if ($action->getInventory()->getItem($action->getSlot())->getId() != 0) {
-                            //chestから出したとき
-                        } else {
-                            //chestに入れたとき
-                        }
+                    if ($action->getInventory() instanceof PlayerInventory) {
+                        $p = $ev->getTransaction()->getSource();
+                        $n = $p->getName();
+                        $pT = self::getpT($n);
+                        $p->getInventory()->close($p);
 
-                        var_dump("c" . $action->getSlot() . "-" . $action->getInventory()->getItem($action->getSlot())->getId());
-
-
-                    } else {
-                        var_dump($action->getSlot() . "-" . $action->getInventory()->getItem($action->getSlot())->getId());
                         switch ($action->getSlot()) {
                             case 19;
-                                $cansel = true;
-                                $n = $action->getInventory()->getItem(35)->getName();
-                                if ($this->pT[$n]->s_tempopen != "StackStrage") {
-                                    $this->pT[$n]->s_tempopen = "StackStrage";
-                                    ChestGuiManager::sendGui($this->pT[$n], "StackStrage");
-                                }
-                                break;
+                                $pT->s_chestInstance = new StackStrage($pT);
+                                $ev->setCancelled();
+                                return;
+
+                            case 20:
+                                $pT->s_chestInstance = new SkilSelect($pT);
+                                $ev->setCancelled();
+                                return;
+
+                            case 24:
+                                $pT->s_chestInstance = new WorldSelect($pT);
+                                $ev->setCancelled();
+                                return;
+
+                            case 25:
+                                ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
+                                $this->getScheduler()->scheduleDelayedTask(new TeleportTask($p, $p->getLevel()->getSafeSpawn()), 10);
+                                $ev->setCancelled();
+                                return;
 
                             case 28:
-                                $cansel = true;
-                                $n = $action->getInventory()->getItem(35)->getName();
-                                if ($this->pT[$n]->s_open != "dust") {
-                                    $this->pT[$n]->s_open = "dust";
-                                    ChestGuiManager::sendGui($this->pT[$n], "ゴミ箱");
+                                $pT->s_chestInstance = new Dust($pT);
+                                $ev->setCancelled();
+                                return;
+
+                            case 29:
+                                $ev->setCancelled();
+                                return;
+
+                            case 30:
+                                $count = 64;
+                                if ($pT->s_gatya < 64) {
+                                    if ($pT->s_gatya <= 0) {
+                                        $p->sendMessage("ガチャ券がありません");
+                                    }
+                                    $count = $pT->s_gatya;
                                 }
-                                break;
+                                $item = Item::get(Item::MOB_HEAD, 3, $count);
+                                $item->setCustomName("ガチャ券\n\n所有者:" . $n);
+                                $nbt = $item->getNamedTag();
+                                $nbt->setInt(StackStrage_API::NOTSTACK, 1);
+                                $nbt->setInt(gatya::GATYA ,0);
+                                $nbt->setString(StackStrage_API::PLAYERNAME, $n);
+                                $item->setNamedTag($nbt);
+                                if ($p->getInventory()->canAddItem($item)) {
+                                    $p->getInventory()->addItem($item);
+                                } else {
+                                    $p->sendMessage("インベントリに空きがありません");
+                                }
+                                $pT->s_gatya -= $count;
+                                $ev->setCancelled();
+                                return;
+
+                            case 34:
+                                $ev->setCancelled();
+                                ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
+                                $this->getScheduler()->scheduleDelayedTask(new Transfer($p) ,10);
+                                return;
 
                             case 35:
-                                $n = $action->getInventory()->getItem(35)->getName();
                                 $ev->setCancelled();
 
                                 $pT = $this->pT[$n];
 
-                                $this->level->set($n, $pT->s_level);
-                                $this->skil->set($n, $pT->s_skil);
-                                $this->mana->set($n, $pT->s_mana);
-                                $this->coin->set($n, $pT->s_coin);
                                 $this->strage->set($n, $pT->s_strage);
-                                $this->data->set($n, $pT->s_data);
-                                $this->level->save();
-                                $this->skil->save();
-                                $this->mana->save();
-                                $this->coin->save();
+                                $this->data->set($n, $pT->getData());
+                                $this->strage->save();
                                 $this->data->save();
 
                                 $pT = new PlayerTask($pT->getPlayer());
 
-                                $pT->s_level = $this->level->get($n);
-                                $pT->s_skil = $this->skil->get($n);
-                                $pT->s_mana = $this->mana->get($n);
-                                $pT->s_coin = $this->coin->get($n);
                                 $pT->s_strage = $this->strage->get($n);
-                                $pT->s_data = $this->data->get($n);
+                                $pT->setData($this->data->get($n));
 
                                 $this->pT[$n] = $pT;
                                 $pT->sendLog("plyaerデータを所得しました");
 
-                                break;
+                                return;
 
                             case 0:
                             case 1:
@@ -267,32 +395,16 @@ class main extends PluginBase implements listener
                             case 6:
                             case 7:
                             case 8:
-                                break;
+                                return;
 
                             default:
-                                $cansel = true;
-                                break;
+                                $ev->setCancelled();
+                                return;
                         }
                     }
                 }
             }
         }
-        if ($cansel)
-        {
-            $ev->setCancelled();
-        }
-    }
-
-    public function onOpen(InventoryOpenEvent $ev)
-    {
-        $p = $ev->getPlayer();
-        $n = $p->getName();
-    }
-
-    public function onClose(InventoryCloseEvent $ev)
-    {
-        $this->pT[$ev->getPlayer()->getName()]->s_open = false;
-        ChestGuiManager::onClose($ev);
     }
 
     public function onReceive(DataPacketReceiveEvent $ev)
@@ -310,7 +422,7 @@ class main extends PluginBase implements listener
 
     /**
      * @param $n
-     * @return mixed
+     * @return PlayerTask
      */
     static public function getpT($n)
     {
@@ -319,7 +431,7 @@ class main extends PluginBase implements listener
     }
 
     /**
-     * @return mixed
+     * @return main
      */
     static public function getMain()
     {
