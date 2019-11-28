@@ -137,6 +137,7 @@ class PlayerTask
     public $s_needxp = 1;
 
     public $s_tempdata = NULL;
+    public $s_fly = false;
     public $s_log = [
         12 => "this is server log",
         11 => "null",
@@ -172,7 +173,7 @@ class PlayerTask
     public function __construct($p)
     {
         $this->p = $p;
-        $this->s_nowSkil = new Skil($this);
+        $this->s_nowSkil = 'Ree\seichi\skil\\' . "Skil";
     }
 
     /**
@@ -198,7 +199,7 @@ class PlayerTask
 
         $skil = $data["nowskil"];
         $skil = 'Ree\seichi\skil\\' . $skil;
-        $this->s_nowSkil = new $skil($this);
+        $this->s_nowSkil = $skil;
 
         $this->s_needxp = $this->getNeedxp();
     }
@@ -214,7 +215,7 @@ class PlayerTask
         $data["mana"] = $this->s_mana;
         $data["coin"] = $this->s_coin;
         $data["experience"] = $this->s_experience;
-        $data["nowskil"] = $this->s_nowSkil->getClassName();
+        $data["nowskil"] = $this->s_nowSkil::getClassName();
         $data["gatya"] = $this->s_gatya;
 
         return $data;
@@ -296,6 +297,7 @@ class PlayerTask
         $level = $this->s_level;
         $old = 6500;
 
+
         for ($i = 11; $i <= $level; $i++) {
             $oldlevel = $level - $i;
             $oldxp = $oldlevel * 1500;
@@ -357,12 +359,8 @@ class PlayerTask
     {
         if ($this->s_nowSkil) {
             $skil = $this->s_nowSkil;
-            if (!$skil instanceof Skil) {
-                $this->errer("line" . __LINE__ . " スキルが認識されませんでした" ,$this );
-                return false;
-            }
 
-            $space = $this->s_nowSkil->getSpace($block, $block->getFloorX(), $block->getFloorY(), $block->getFloorZ());
+            $space = $this->s_nowSkil::getSpace($block, $block->getFloorX(), $block->getFloorY(), $block->getFloorZ() ,$this->getPlayer());
             $this->s_running = true;
             foreach ($space as $vec3) {
                 $bl = $this->getPlayer()->getLevel()->getBlock($vec3);
@@ -435,6 +433,14 @@ class PlayerTask
     public function updateInventory(): void
     {
         $p = $this->getPlayer();
+        if (!$p instanceof Player)
+        {
+            return;
+        }
+        if (!$p->isOnline())
+        {
+            return;
+        }
 
         for ($i = 9; $i <= 35; $i++) {
             $item = Item::get(106, 0, 1);
@@ -448,6 +454,16 @@ class PlayerTask
         $item = Item::get(340, 0, 1);
         $item->setCustomName("スキル設定");
         $p->getInventory()->setItem(20, $item);
+
+        $item = Item::get(Item::FEATHER, 0, 1);
+        if ($this->s_fly)
+        {
+            $bool = "§7無効";
+        }else{
+            $bool = "§a有効";
+        }
+        $item->setCustomName("フライを".$bool."§rにする");
+        $p->getInventory()->setItem(23, $item);
 
         $item = Item::get(345, 0, 1);
         $item->setCustomName("ワールド移動");
@@ -469,9 +485,9 @@ class PlayerTask
         $item->setCustomName("所持ガチャ券 : ".$this->s_gatya);
         $p->getInventory()->setItem(30, $item);
 
-        $item = Item::get(Item::DRAGON_EGG, 0, 1);
-        $item->setCustomName("同盟鯖");
-        $p->getInventory()->setItem(34, $item);
+//        $item = Item::get(Item::DRAGON_EGG, 0, 1);
+//        $item->setCustomName("同盟鯖");
+//        $p->getInventory()->setItem(34, $item);
 
         for ($i = 0; $i <= 8; $i++)
         {
@@ -479,21 +495,42 @@ class PlayerTask
             $nbt = $item->getNamedTag();
             if ($nbt->offsetExists(StackStrage_API::STRAGE))
             {
-                $new = Item::get($item->getId() ,$item->getDamage() ,$item->getCount());
-                if ($item->hasEnchantments()) {
-                    foreach ($item->getEnchantments() as $ench) {
-                        $new->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment($ench->getId()) ,$ench->getLevel()));
+                if ($nbt->offsetExists(Gatya::GATYA))
+                {
+                    $count = $item->getCount();
+                    $data = $nbt->getInt(Gatya::GATYA);
+                    $new = Gatya::getGatya($data ,$p);
+                    $new->setCount($count);
+                    $p->getInventory()->setItem($i ,$new);
+                }else{
+                    $new = Item::get($item->getId() ,$item->getDamage() ,$item->getCount());
+                    if ($item->hasEnchantments()) {
+                        foreach ($item->getEnchantments() as $ench) {
+                            $new->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment($ench->getId()) ,$ench->getLevel()));
+                        }
                     }
+                    $p->getInventory()->setItem($i ,$new);
                 }
-                $p->getInventory()->setItem($i ,$new);
             }
         }
     }
 
+    public function getLevel()
+    {
+        return $this->s_level;
+    }
+
     public function sendBar(): void
     {
+        $this->sendScore();
+        return;
         $bar = $this->bar;
-        $bar->setTitle("§bMana" . $this->s_mana . "/" . $this->getMaxmana());
+        $string = "§bMana" . $this->s_mana ."/" . $this->getMaxmana();
+        if (!$string)
+        {
+            return;
+        }
+        $bar->setTitle($string);
         $par = $this->s_mana / $this->getMaxmana();
         $bar->setPercentage($par);
 
@@ -502,6 +539,7 @@ class PlayerTask
 
     public function createBar(): void
     {
+        return;
         $bar = new BossBar();
         $bar->setTitle("§bMana" . $this->s_mana . "/" . $this->getMaxmana());
         $par = $this->s_mana / $this->getMaxmana();
@@ -551,7 +589,7 @@ class PlayerTask
         $entry = new ScorePacketEntry();
         $entry->objectiveName = self::board;
         $entry->type = 3;
-        $entry->customName = "§8".$data."      ".$this->getPlayer()->getLevel()->getName();
+        $entry->customName = "§8".$data;
         $entry->score = 1;
         $entry->scoreboardId = 1;
         $pk->entries[1] = $entry;
@@ -575,7 +613,7 @@ class PlayerTask
         $entry = new ScorePacketEntry();
         $entry->objectiveName = self::board;
         $entry->type = 3;
-        $entry->customName = "  スキル   :   " . $this->s_nowSkil->getName();
+        $entry->customName = "  スキル   :   " . $this->s_nowSkil::getName();
         $entry->score = 4;
         $entry->scoreboardId = 4;
         $pk->entries[4] = $entry;
@@ -591,7 +629,7 @@ class PlayerTask
         $entry = new ScorePacketEntry();
         $entry->objectiveName = self::board;
         $entry->type = 3;
-        $entry->customName = "      ";
+        $entry->customName = "  マナ   :   " . $this->s_mana . "//" . $this->getMaxmana();
         $entry->score = 6;
         $entry->scoreboardId = 6;
         $pk->entries[6] = $entry;

@@ -14,7 +14,6 @@ class ImmobileTask extends Task
      * @var Player
      */
     private $p;
-
     public function __construct(Player $p)
     {
         $this->p = $p;

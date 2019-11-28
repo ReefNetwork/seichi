@@ -43,7 +43,7 @@ class Skil
     /**
      * @return string
      */
-    public function getName()
+    public static function getName()
     {
         return "Default";
     }
@@ -51,19 +51,20 @@ class Skil
     /**
      * @return string
      */
-    public function getClassName()
+    public static function getClassName()
     {
         return "Skil";
     }
 
     /**
      * @param Block $block
-     * @param $x
-     * @param $y
-     * @param $z
-     * @return Vector3 array
+     * @param int $x
+     * @param int $y
+     * @param int $z
+     * @param Player $p
+     * @return array
      */
-    public function getSpace($block ,$x ,$y ,$z)
+    public static function getSpace(Block $block ,int $x ,int $y ,int $z ,Player $p)
     {
         $space[]= $block->asVector3();
         return $space;
@@ -72,17 +73,9 @@ class Skil
     /**
      * @return int
      */
-    public function getMana()
+    public static function getMana()
     {
         return 0;
-    }
-
-    /**
-     * @return PlayerTask
-     */
-    public function getpT()
-    {
-        return $this->pT;
     }
 
     /**
@@ -110,13 +103,5 @@ class Skil
         $item->setCustomName("スキル無し");
 
         return $item;
-    }
-
-    /**
-     * @param Vector3 $vector3
-     */
-    protected function getDirection(Vector3 $vec3)
-    {
-        return;
     }
 }

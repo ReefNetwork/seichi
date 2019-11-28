@@ -4,17 +4,20 @@
 namespace Ree\seichi\skil;
 
 
+use pocketmine\block\Block;
 use pocketmine\item\Item;
+use pocketmine\Player;
+use Ree\parkour\main;
 
 class Skil_3_3_3 extends Skil
 {
 
-    public function getName()
+    public static function getName()
     {
         return "3_3_3";
     }
 
-    public function getClassName()
+    public static function getClassName()
     {
         return "Skil_3_3_3";
     }
@@ -24,14 +27,14 @@ class Skil_3_3_3 extends Skil
      * @param int $x
      * @param int $y
      * @param int $z
+     * @param Player $p
      * @return array|\pocketmine\math\Vector3
      */
-    public function getSpace($block, $x, $y, $z)
+    public static function getSpace(Block $block,int $x,int $y,int $z ,Player $p)
     {
         $x = 0;
         $z = 0;
         $space = [];
-        $p = self::$p;
         $direction = $p->getDirection();
         switch ($direction)
         {
@@ -60,7 +63,7 @@ class Skil_3_3_3 extends Skil
                 $mz = 0;
                 break;
             default:
-                $this->getpT()->errer("line" . __LINE__ . " 不正な方角", $this);
+                \Ree\seichi\main::getpT($p->getName())->errer("line" . __LINE__ . " 不正な方角");
         }
 
         if ($p->getFloorY() > $y) {
@@ -96,7 +99,7 @@ class Skil_3_3_3 extends Skil
         return $space;
     }
 
-    public function getMana()
+    public static function getMana()
     {
         return 12;
     }

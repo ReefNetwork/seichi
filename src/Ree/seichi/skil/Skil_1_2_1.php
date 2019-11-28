@@ -6,17 +6,19 @@ namespace Ree\seichi\skil;
 
 
 
+use pocketmine\block\Block;
 use pocketmine\item\Item;
+use pocketmine\Player;
 
 class Skil_1_2_1 extends Skil
 {
 
-    public function getName()
+    public static function getName()
     {
         return "1_2_1";
     }
 
-    public function getClassName()
+    public static function getClassName()
     {
         return "Skil_1_2_1";
     }
@@ -28,13 +30,12 @@ class Skil_1_2_1 extends Skil
      * @param int $z
      * @return array|\pocketmine\math\Vector3
      */
-    public function getSpace($block ,$x ,$y ,$z)
+    public static function getSpace(Block $block,int $x,int $y,int $z ,Player $p)
     {
         $x = 0;
         $z = 0;
         $space = [];
 
-        $p = self::$p;
         if ($p->getFloorY() == $y)
         {
             for ($y = 0 ;$y <= 1 ;$y++)
@@ -53,7 +54,7 @@ class Skil_1_2_1 extends Skil
         return $space;
     }
 
-    public function getMana()
+    public static function getMana()
     {
         return 1;
     }

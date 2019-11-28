@@ -36,6 +36,7 @@ use pocketmine\event\server\DataPacketReceiveEvent;
 
 use Ree\reef\ReefAPI;
 use Ree\seichi\skil\background\BreakMana;
+use Ree\seichi\Task\FlyTask;
 use Ree\seichi\Task\InventoryUpdateTask;
 use Ree\seichi\Task\ScoreBoardTask;
 use Ree\seichi\Task\TeleportTask;
@@ -84,6 +85,16 @@ class main extends PluginBase implements listener
         $this->getServer()->loadLevel("lobby");
         $this->getServer()->loadLevel("leveling_1");
         $this->getServer()->loadLevel("public");
+
+        for ($i = 1; $i <= 9; $i++) {
+            $item = Gatya::getGatya($i);
+            Item::addCreativeItem($item);
+        }
+        $item = Gatya::getGatya(Gatya::APPLE1);
+        Item::addCreativeItem($item);
+        $item = Gatya::getGatya(0);
+        Item::addCreativeItem($item);
+
         echo "Reef_core >> Complete\n";
     }
 
@@ -127,6 +138,7 @@ class main extends PluginBase implements listener
         $this->pT[$n] = $pT;
         $pT->task["InventoryUpdateTask"] = $this->getScheduler()->scheduleRepeatingTask(new InventoryUpdateTask($pT), 50)->getTaskId();
         $pT->task["ScoreBoardTask"] = $this->getScheduler()->scheduleRepeatingTask(new ScoreBoardTask($pT), 10)->getTaskId();
+        $pT->task["FlyTask"] = $this->getScheduler()->scheduleRepeatingTask(new FlyTask($pT), 1200)->getTaskId();
 
         $pT->updateInventory();
         $pT->createBar();
@@ -140,8 +152,12 @@ class main extends PluginBase implements listener
         $n = $p->getName();
         $pT = self::getpT($n);
 
-        $this->getScheduler()->cancelTask($pT->task["InventoryUpdateTask"]);
-        $this->getScheduler()->cancelTask($pT->task["ScoreBoardTask"]);
+        if (is_array($pT->task))
+        {
+            foreach ($pT->task as $id) {
+                $this->getScheduler()->cancelTask($id);
+            }
+        }
 
         $this->strage->set($n, $pT->s_strage);
         $this->data->set($n, $pT->getData());
@@ -157,36 +173,31 @@ class main extends PluginBase implements listener
         $item = $ev->getItem();
 
         $nbt = $item->getNamedTag();
-        if ($nbt->offsetExists(Gatya::GATYA))
-        {
-            switch ($nbt->getInt(Gatya::GATYA))
-            {
+        if ($nbt->offsetExists(Gatya::GATYA)) {
+            switch ($nbt->getInt(Gatya::GATYA)) {
                 case Gatya::APPLE1:
                     $mana = $pT->s_mana + 200;
-                    if ($mana > $pT->getMaxmana())
-                    {
+                    if ($mana > $pT->getMaxmana()) {
                         $pT->s_mana = $pT->getMaxmana();
-                    }else{
+                    } else {
                         $pT->s_mana = $mana;
                     }
                     break;
 
                 case Gatya::APPLE2:
                     $mana = $pT->s_mana + 1200;
-                    if ($mana > $pT->getMaxmana())
-                    {
+                    if ($mana > $pT->getMaxmana()) {
                         $pT->s_mana = $pT->getMaxmana();
-                    }else{
+                    } else {
                         $pT->s_mana = $mana;
                     }
                     break;
 
                 case Gatya::APPLE3:
                     $mana = $pT->s_mana + 6200;
-                    if ($mana > $pT->getMaxmana())
-                    {
+                    if ($mana > $pT->getMaxmana()) {
                         $pT->s_mana = $pT->getMaxmana();
-                    }else{
+                    } else {
                         $pT->s_mana = $mana;
                     }
                     break;
@@ -222,9 +233,18 @@ class main extends PluginBase implements listener
         }
 
         BreakMana::onBreak($pT);
-        if ($pT->s_mana >= $pT->s_nowSkil->getMana()) {
-            $pT->s_mana = $pT->s_mana - $pT->s_nowSkil->getMana();
-            $pT->sendBar();
+        $pT->sendBar();
+        if ($p->isSneaking()) {
+            $pT->addxp($ev->getBlock()->asVector3());
+            foreach ($ev->getDrops() as $drop) {
+                StackStrage_API::add($p, $drop);
+            }
+            $ev->setDrops([]);
+            $pT->addCoin(0.1);
+            return;
+        }
+        if ($pT->s_mana >= $pT->s_nowSkil::getMana()) {
+            $pT->s_mana = $pT->s_mana - $pT->s_nowSkil::getMana();
             $pT->addCoin(0.1);
         } else {
             $p->sendTip("§cSkil発動に必要なマナが足りません");
@@ -272,17 +292,16 @@ class main extends PluginBase implements listener
         $pT = self::getpT($n);
         $item = $ev->getItem();
 
-        if ($ev->getItem()->getId() == Item::MOB_HEAD) {
+
+        if ($ev->getItem()->getId() == Item::EMERALD) {
             $tag = $item->getNamedTag();
-            if ($tag->offsetExists(Gatya::GATYA))
-            {
+            if ($tag->offsetExists(Gatya::GATYA)) {
                 $bool = Gatya::onGatya($p);
-                if ($bool)
-                {
+                if ($bool) {
                     $item->setCount(1);
                     $p->getInventory()->removeItem($item);
                     $p->sendTip("§aガチャを引きました");
-                }else{
+                } else {
                     $p->sendTip("§cインベントリがいっぱいです");
                 }
             }
@@ -316,6 +335,26 @@ class main extends PluginBase implements listener
                                 $ev->setCancelled();
                                 return;
 
+                            case 23:
+                                $ev->setCancelled();
+                                ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
+                                if (!$pT->s_fly) {
+                                    if ($pT->s_coin > 1) {
+                                        $p->sendMessage("§aフライが有効になりました");
+                                        $pT->s_fly = true;
+                                        $p->setAllowFlight(true);
+                                    } else {
+                                        $p->sendMessage("§cお金が足りません");
+                                    }
+                                } else {
+                                    $p->sendMessage("§7フライを無効にしました");
+                                    $ev->setCancelled();
+                                    $pT->s_fly = false;
+                                    $p->setAllowFlight(false);
+                                    $p->setFlying(false);
+                                }
+                                return;
+
                             case 24:
                                 $pT->s_chestInstance = new WorldSelect($pT);
                                 $ev->setCancelled();
@@ -344,13 +383,8 @@ class main extends PluginBase implements listener
                                     }
                                     $count = $pT->s_gatya;
                                 }
-                                $item = Item::get(Item::MOB_HEAD, 3, $count);
-                                $item->setCustomName("ガチャ券\n\n所有者:" . $n);
-                                $nbt = $item->getNamedTag();
-                                $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                                $nbt->setInt(gatya::GATYA ,0);
-                                $nbt->setString(StackStrage_API::PLAYERNAME, $n);
-                                $item->setNamedTag($nbt);
+                                $item = Gatya::getGatya(0 ,$p);
+                                $item->setCount($count);
                                 if ($p->getInventory()->canAddItem($item)) {
                                     $p->getInventory()->addItem($item);
                                 } else {
@@ -363,7 +397,7 @@ class main extends PluginBase implements listener
                             case 34:
                                 $ev->setCancelled();
                                 ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
-                                $this->getScheduler()->scheduleDelayedTask(new Transfer($p) ,10);
+                                $this->getScheduler()->scheduleDelayedTask(new Transfer($p), 10);
                                 return;
 
                             case 35:
@@ -383,7 +417,6 @@ class main extends PluginBase implements listener
 
                                 $this->pT[$n] = $pT;
                                 $pT->sendLog("plyaerデータを所得しました");
-
                                 return;
 
                             case 0:

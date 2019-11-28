@@ -13,7 +13,6 @@ class ScoreBoardTask extends Task
      * @var PlayerTask
      */
     private $pT;
-
     public function __construct(PlayerTask $pT)
     {
         $this->pT = $pT;

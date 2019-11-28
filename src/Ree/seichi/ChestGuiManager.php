@@ -59,12 +59,11 @@ use pocketmine\inventory\DoubleChestInventory;
 
 class ChestGuiManager
 {
-
     /**
-     * @param $pT
-     * @param $title
+     * @param \Ree\seichi\PlayerTask $pT
+     * @param string $title
      */
-    static public function sendGui($pT, $title)
+    static public function sendGui(PlayerTask $pT,string $title)
     {
 
         $p = $pT->getPlayer();
@@ -113,8 +112,6 @@ class ChestGuiManager
         $instance = new DoubleChestInventory($block1, $block2);
 
         main::getMain()->getScheduler()->scheduleDelayedTask(new ChestTask($p, $instance), 3);
-
-        main::getMain()->getScheduler()->scheduleDelayedTask(new CheckTask($p, $instance), 3);
 
         switch ($title) {
             case "StackStrage":
@@ -171,18 +168,5 @@ class ChestTask extends Task
     public function onRun(int $currentTick)
     {
         $this->p->addWindow($this->instance);
-    }
-}
-
-class CheckTask extends Task
-{
-    public function __construct()
-    {
-
-    }
-
-    public function onRun(int $currentTick)
-    {
-        // TODO: Implement onRun() method.
     }
 }
