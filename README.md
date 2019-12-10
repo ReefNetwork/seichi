@@ -1,13 +1,13 @@
 # seichi
 
-#Description
+# Description
 
 ReefServerMainSystem
 
-#Link
+# Link
 
 [Discord](https://discord.gg/M4A6cak)
 
-#Author
+# Author
 
 [Ree-jp](https://github.com/Ree-jp)
