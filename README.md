@@ -4,6 +4,8 @@
 
 ReefServerMainSystem
 
+コードの参考になるかもしれません
+
 # Link
 
 [Discord](https://discord.gg/M4A6cak)
