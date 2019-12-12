@@ -1,5 +1,9 @@
 # seichi
 
+# Api
+
+[ApiBossbar](https://github.com/thebigsmileXD/apibossbar)
+
 # Description
 
 ReefServerMainSystem
