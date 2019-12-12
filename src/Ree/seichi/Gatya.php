@@ -23,6 +23,8 @@ class Gatya
     const APPLE3 = "99993";
     const XP = "99999";
 
+    const ENCHANT_ADD_MANA = 100;
+
     /**
      * @param Player $p
      * @return bool
@@ -306,6 +308,19 @@ class Gatya
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 1));
                 break;
 
+            case $rand > 170 && $rand < 200:
+                $item = Item::get(Item::IRON_PICKAXE ,211 ,1);
+                $item->setCustomName("§eLucky§ePickaxe\n\n§2所有者 : " . $n);
+                $nbt = $item->getNamedTag();
+                $nbt->setInt(StackStrage_API::NOTSTACK, 1);
+                $nbt->setInt(gatya::GATYA, 171);
+                $nbt->setString(StackStrage_API::PLAYERNAME, $n);
+                $item->setNamedTag($nbt);
+                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 1));
+                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::FORTUNE), 10));
+                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Gatya::ENCHANT_ADD_MANA), 10));
+                break;
+
             case self::APPLE1:
                 $item = Item::get(Item::GOLDEN_APPLE, 0, 1);
                 $item->setCustomName("§eガチャリンゴ§r(§b小§r)\n食べると回復するよ!!!");
@@ -329,7 +344,7 @@ class Gatya
                 $rand = mt_rand(1, 3);
                 switch ($rand) {
                     case 1:
-                        $count = mt_rand(1 ,8);
+                        $count = mt_rand(1 ,3);
                         $item = Item::get(Item::GOLDEN_APPLE, 0, $count);
                         $item->setCustomName("§eガチャリンゴ§r(§b小§r)\n食べると回復するよ!!!");
                         $nbt = $item->getNamedTag();

@@ -18,6 +18,7 @@ class Skil
         "Skil_1_2_1",
         "Skil_2_2_3",
         "Skil_3_3_3",
+        "Skil_5_3_5",
     ];
 
     /**
@@ -103,5 +104,10 @@ class Skil
         $item->setCustomName("スキル無し");
 
         return $item;
+    }
+
+    public static function getNeedskil()
+    {
+
     }
 }

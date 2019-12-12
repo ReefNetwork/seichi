@@ -17,9 +17,20 @@
 
 namespace Ree\seichi;
 
+use pocketmine\block\Block;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\inventory\PlayerInventory;
+use pocketmine\item\enchantment\Enchantment;
+use pocketmine\level\generator\GeneratorManager;
+use pocketmine\level\Level;
+use pocketmine\level\particle\AngryVillagerParticle;
+use pocketmine\level\particle\CriticalParticle;
+use pocketmine\level\particle\DustParticle;
+use pocketmine\level\particle\ExplodeParticle;
+use pocketmine\level\particle\HugeExplodeParticle;
+use pocketmine\level\particle\SnowballPoofParticle;
+use pocketmine\level\Position;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
@@ -35,7 +46,9 @@ use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 
 use Ree\reef\ReefAPI;
+use Ree\seichi\form\MenuForm;
 use Ree\seichi\skil\background\BreakMana;
+use Ree\seichi\skil\background\Fortune;
 use Ree\seichi\Task\FlyTask;
 use Ree\seichi\Task\InventoryUpdateTask;
 use Ree\seichi\Task\ScoreBoardTask;
@@ -82,9 +95,33 @@ class main extends PluginBase implements listener
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->strage = new Config($this->getDataFolder() . "user_strage.yml", Config::YAML);
         $this->data = new Config($this->getDataFolder() . "user_data.yml", Config::YAML);
+
+//		$this->getServer()->generateLevel("lobby", time(), generatorManager::getGenerator("flat"));
+//		$this->getServer()->generateLevel("leveling_1", time(), generatorManager::getGenerator("default"));
+//		$this->getServer()->generateLevel("public", time(), generatorManager::getGenerator("flat"));
+
         $this->getServer()->loadLevel("lobby");
         $this->getServer()->loadLevel("leveling_1");
         $this->getServer()->loadLevel("public");
+
+
+
+        Enchantment::registerEnchantment(new Enchantment(
+            Enchantment::FORTUNE,
+            'fortune',
+            Enchantment::RARITY_RARE,
+            Enchantment::SLOT_DIG,
+            Enchantment::SLOT_SHEARS,
+            10
+        ));
+        Enchantment::registerEnchantment(new Enchantment(
+            Gatya::ENCHANT_ADD_MANA,
+            'add_max_mana',
+            Enchantment::RARITY_MYTHIC,
+            Enchantment::SLOT_ALL,
+            Enchantment::SLOT_SHEARS,
+            9999
+        ));
 
         for ($i = 1; $i <= 9; $i++) {
             $item = Gatya::getGatya($i);
@@ -127,6 +164,7 @@ class main extends PluginBase implements listener
         } else {
             $p->addActionBarMessage("plyaerデータが見つからんかったためデータをデフォルトに適用します");
             $pT->sendLog("plyaerデータが見つからんかったためデータをデフォルトに適用します");
+            $p->getInventory()->addItem(Item::get(Item::STICK)->setCustomName("メニュー"));
             $p->getInventory()->addItem(Item::get(Item::DIAMOND_PICKAXE));
             $p->getInventory()->addItem(Item::get(Item::DIAMOND_AXE));
             $p->getInventory()->addItem(Item::get(Item::DIAMOND_SHOVEL));
@@ -137,7 +175,7 @@ class main extends PluginBase implements listener
         }
         $this->pT[$n] = $pT;
         $pT->task["InventoryUpdateTask"] = $this->getScheduler()->scheduleRepeatingTask(new InventoryUpdateTask($pT), 50)->getTaskId();
-        $pT->task["ScoreBoardTask"] = $this->getScheduler()->scheduleRepeatingTask(new ScoreBoardTask($pT), 10)->getTaskId();
+        $pT->task["ScoreBoardTask"] = $this->getScheduler()->scheduleRepeatingTask(new ScoreBoardTask($pT), 15)->getTaskId();
         $pT->task["FlyTask"] = $this->getScheduler()->scheduleRepeatingTask(new FlyTask($pT), 1200)->getTaskId();
 
         $pT->updateInventory();
@@ -152,8 +190,7 @@ class main extends PluginBase implements listener
         $n = $p->getName();
         $pT = self::getpT($n);
 
-        if (is_array($pT->task))
-        {
+        if (is_array($pT->task)) {
             foreach ($pT->task as $id) {
                 $this->getScheduler()->cancelTask($id);
             }
@@ -176,7 +213,7 @@ class main extends PluginBase implements listener
         if ($nbt->offsetExists(Gatya::GATYA)) {
             switch ($nbt->getInt(Gatya::GATYA)) {
                 case Gatya::APPLE1:
-                    $mana = $pT->s_mana + 200;
+                    $mana = $pT->s_mana + 300;
                     if ($mana > $pT->getMaxmana()) {
                         $pT->s_mana = $pT->getMaxmana();
                     } else {
@@ -213,14 +250,43 @@ class main extends PluginBase implements listener
     {
         $p = $ev->getPlayer();
         $n = $p->getName();
+        $item = $ev->getItem();
+        $block = $ev->getBlock();
         $pT = self::getpT($n);
 
-        if (!ReefAPI::isProtect($ev->getBlock()->asPosition())) {
+        if (!ReefAPI::isProtect($block->asPosition())) {
             return;
+        }
+        if (!$this->checkHigth($ev->getBlock()->asPosition() ,$ev->getBlock()->getLevel()))
+        {
+            $p->sendTip("§c上から掘ってください");
+            $ev->setCancelled();
+            return;
+        }
+        if ($block->getId() === Block::STONE_SLAB)
+        {
+                if ($block->getFloorY() === 1)
+                {
+                    $ev->setCancelled();
+                    $p->addActionBarMessage("§ry座標が1ブロックのハーフブロックは破壊することが出来ません");
+                    return;
+                }
         }
         if ($ev->getBlock()->getId() == 0) {
             $ev->setCancelled();
             return;
+        }
+
+        $particle = new SnowballPoofParticle($block->asVector3());
+        $p->getLevel()->addParticle($particle);
+
+        if (in_array($ev->getBlock()->getId(), [16 ,21 ,56 ,129 ,153])) {
+            $add = Fortune::doFortune($item);
+            if ($add)
+            {
+                $drop = $ev->getDrops();
+                $drop[0]->setCount($add);
+            }
         }
         if ($pT->s_running) {
             foreach ($ev->getDrops() as $drop) {
@@ -243,6 +309,7 @@ class main extends PluginBase implements listener
             $pT->addCoin(0.1);
             return;
         }
+
         if ($pT->s_mana >= $pT->s_nowSkil::getMana()) {
             $pT->s_mana = $pT->s_mana - $pT->s_nowSkil::getMana();
             $pT->addCoin(0.1);
@@ -293,18 +360,28 @@ class main extends PluginBase implements listener
         $item = $ev->getItem();
 
 
-        if ($ev->getItem()->getId() == Item::EMERALD) {
-            $tag = $item->getNamedTag();
-            if ($tag->offsetExists(Gatya::GATYA)) {
-                $bool = Gatya::onGatya($p);
-                if ($bool) {
-                    $item->setCount(1);
-                    $p->getInventory()->removeItem($item);
-                    $p->sendTip("§aガチャを引きました");
-                } else {
-                    $p->sendTip("§cインベントリがいっぱいです");
+        switch ($ev->getItem()->getId()) {
+            case Item::EMERALD:
+                $tag = $item->getNamedTag();
+                if ($tag->offsetExists(Gatya::GATYA)) {
+                    if (!$p->getInventory()->canAddItem(Item::get(Item::DIAMOND_SHOVEL))) {
+                        $p->sendTip("§cインベントリがいっぱいです");
+                        return;
+                    }
+                    $bool = Gatya::onGatya($p);
+                    if ($bool) {
+                        $item->setCount(1);
+                        $p->getInventory()->removeItem($item);
+                        $p->sendTip("§aガチャを引きました");
+                    } else {
+                        $p->sendTip("§cインベントリがいっぱいです");
+                    }
                 }
-            }
+                break;
+
+            case Item::STICK:
+                $p->sendForm(new MenuForm($pT));
+                break;
         }
     }
 
@@ -383,7 +460,7 @@ class main extends PluginBase implements listener
                                     }
                                     $count = $pT->s_gatya;
                                 }
-                                $item = Gatya::getGatya(0 ,$p);
+                                $item = Gatya::getGatya(0, $p);
                                 $item->setCount($count);
                                 if ($p->getInventory()->canAddItem($item)) {
                                     $p->getInventory()->addItem($item);
@@ -440,6 +517,19 @@ class main extends PluginBase implements listener
         }
     }
 
+    private function checkHigth(Position $pos ,Level $level ,int $higut = 10)
+    {
+        for ($i = 0 ;$i <= $higut ;$i++)
+        {
+            $pos = $pos->add(0 ,1 ,0);
+            if ($level->getBlock($pos)->getId() == Item::AIR)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function onReceive(DataPacketReceiveEvent $ev)
     {
         $p = $ev->getPlayer();
@@ -470,4 +560,12 @@ class main extends PluginBase implements listener
     {
         return self::$main;
     }
+
+	/**
+	 * @return Config
+	 */
+    static public function getData()
+	{
+		return self::getMain()->data;
+	}
 }

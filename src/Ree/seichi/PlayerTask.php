@@ -29,6 +29,7 @@ use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 
+use Ree\reef\ReefAPI;
 use Ree\seichi\skil\Skil;
 use Ree\seichi\Task\ImmobileTask;
 use Ree\seichi\Task\TeleportTask;
@@ -485,9 +486,9 @@ class PlayerTask
         $item->setCustomName("所持ガチャ券 : ".$this->s_gatya);
         $p->getInventory()->setItem(30, $item);
 
-//        $item = Item::get(Item::DRAGON_EGG, 0, 1);
-//        $item->setCustomName("同盟鯖");
-//        $p->getInventory()->setItem(34, $item);
+        $item = Item::get(Item::DRAGON_EGG, 0, 1);
+        $item->setCustomName("同盟鯖");
+        $p->getInventory()->setItem(34, $item);
 
         for ($i = 0; $i <= 8; $i++)
         {
@@ -522,13 +523,15 @@ class PlayerTask
 
     public function sendBar(): void
     {
-        $this->sendScore();
-        return;
         $bar = $this->bar;
         $string = "§bMana" . $this->s_mana ."/" . $this->getMaxmana();
-        if (!$string)
+        if (!$this->getPlayer()->isOnline())
         {
             return;
+        }
+        if (!is_string($string))
+        {
+            self::errer("line" . __LINE__ . " bossbarを正常に送れませんでした", $this);
         }
         $bar->setTitle($string);
         $par = $this->s_mana / $this->getMaxmana();
@@ -539,7 +542,6 @@ class PlayerTask
 
     public function createBar(): void
     {
-        return;
         $bar = new BossBar();
         $bar->setTitle("§bMana" . $this->s_mana . "/" . $this->getMaxmana());
         $par = $this->s_mana / $this->getMaxmana();
@@ -693,7 +695,7 @@ class PlayerTask
         $entry = new ScorePacketEntry();
         $entry->objectiveName = self::board;
         $entry->type = 3;
-        $entry->customName = "   開発中";
+        $entry->customName = "   ".ReefAPI::$news;
         $entry->score = 14;
         $entry->scoreboardId = 14;
         $pk->entries[14] = $entry;
