@@ -3,6 +3,7 @@
 namespace Ree\seichi\form;
 
 use Ree\doumei\TransferForm;
+use Ree\reef\form\SyogoForm;
 use Ree\seichi\Gatya;
 use Ree\StackStrage\Virchal\Dust;
 use Ree\StackStrage\Virchal\GatyaStrage;
@@ -71,6 +72,9 @@ class MenuForm implements \pocketmine\form\Form
                 ],
 				[
 					'text' => "整地ランキング"
+				],
+				[
+					'text' => "称号"
 				],
                 [
                     'text' => "同盟鯖"
@@ -157,7 +161,11 @@ class MenuForm implements \pocketmine\form\Form
 				$p->sendForm(new RankingForm());
 				break;
 
-            case 11:
+			case 11:
+				$p->sendForm(new SyogoForm($p));
+				break;
+
+            case 12:
                 $p->sendForm(new TransferForm());
                 break;
         }
