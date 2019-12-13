@@ -2,6 +2,7 @@
 
 namespace Ree\seichi\form;
 
+use pocketmine\Server;
 use Ree\seichi\main;
 
 class RankingForm implements \pocketmine\form\Form
@@ -21,18 +22,21 @@ class RankingForm implements \pocketmine\form\Form
 		$config = main::getData();
 		$array = main::getData()->getAll();
 		foreach (array_keys($array) as $key) {
-			$data["level"] = $config->get($key)["level"];
-			$data["name"] = $key;
-			$int = 99999999999 - $config->get($key)["experience"];
+//			if (!Server::getInstance()->isOp($key))
+//			{
+				$data["level"] = $config->get($key)["level"];
+				$data["name"] = $key;
+				$int = 99999999999 - $config->get($key)["experience"];
 
-			$bool = isset($this->list[$int]);
-			while ($bool)
-			{
-				$int++;
 				$bool = isset($this->list[$int]);
-			}
-			$this->intlist[] = $int;
-			$this->list[$int] = $data;
+				while ($bool)
+				{
+					$int++;
+					$bool = isset($this->list[$int]);
+				}
+				$this->intlist[] = $int;
+				$this->list[$int] = $data;
+//			}
 		}
 		$i = 1;
 		$string = "";
