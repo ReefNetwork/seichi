@@ -254,6 +254,10 @@ class main extends PluginBase implements listener
         $block = $ev->getBlock();
         $pT = self::getpT($n);
 
+if ($ev->isCanselld())
+{
+return;
+}
         if (!ReefAPI::isProtect($block->asPosition())) {
             return;
         }
