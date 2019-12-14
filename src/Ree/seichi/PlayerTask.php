@@ -443,52 +443,52 @@ class PlayerTask
             return;
         }
 
-        for ($i = 9; $i <= 35; $i++) {
-            $item = Item::get(106, 0, 1);
-            $item->setCustomName("§0");
-            $p->getInventory()->setItem($i, $item);
-        }
-        $item = Item::get(54, 0, 1);
-        $item->setCustomName("StackStrage_β");
-        $p->getInventory()->setItem(19, $item);
-
-        $item = Item::get(340, 0, 1);
-        $item->setCustomName("スキル設定");
-        $p->getInventory()->setItem(20, $item);
-
-        $item = Item::get(Item::FEATHER, 0, 1);
-        if ($this->s_fly)
-        {
-            $bool = "§7無効";
-        }else{
-            $bool = "§a有効";
-        }
-        $item->setCustomName("フライを".$bool."§rにする");
-        $p->getInventory()->setItem(23, $item);
-
-        $item = Item::get(345, 0, 1);
-        $item->setCustomName("ワールド移動");
-        $p->getInventory()->setItem(24, $item);
-
-        $item = Item::get(138, 0, 1);
-        $item->setCustomName("スポーン地点に戻る");
-        $p->getInventory()->setItem(25, $item);
-
-        $item = Item::get(325, 10, 1);
-        $item->setCustomName("ゴミ箱");
-        $p->getInventory()->setItem(28, $item);
-
-        $item = Item::get(387, 0, 1);
-        $item->setCustomName("チャットを送信する(未実装)");
-        $p->getInventory()->setItem(29, $item);
-
-        $item = Item::get(386, 0, 1);
-        $item->setCustomName("所持ガチャ券 : ".$this->s_gatya);
-        $p->getInventory()->setItem(30, $item);
-
-        $item = Item::get(Item::DRAGON_EGG, 0, 1);
-        $item->setCustomName("同盟鯖");
-        $p->getInventory()->setItem(34, $item);
+//        for ($i = 9; $i <= 35; $i++) {
+//            $item = Item::get(106, 0, 1);
+//            $item->setCustomName("§0");
+//            $p->getInventory()->setItem($i, $item);
+//        }
+//        $item = Item::get(54, 0, 1);
+//        $item->setCustomName("StackStrage_β");
+//        $p->getInventory()->setItem(19, $item);
+//
+//        $item = Item::get(340, 0, 1);
+//        $item->setCustomName("スキル設定");
+//        $p->getInventory()->setItem(20, $item);
+//
+//        $item = Item::get(Item::FEATHER, 0, 1);
+//        if ($this->s_fly)
+//        {
+//            $bool = "§7無効";
+//        }else{
+//            $bool = "§a有効";
+//        }
+//        $item->setCustomName("フライを".$bool."§rにする");
+//        $p->getInventory()->setItem(23, $item);
+//
+//        $item = Item::get(345, 0, 1);
+//        $item->setCustomName("ワールド移動");
+//        $p->getInventory()->setItem(24, $item);
+//
+//        $item = Item::get(138, 0, 1);
+//        $item->setCustomName("スポーン地点に戻る");
+//        $p->getInventory()->setItem(25, $item);
+//
+//        $item = Item::get(325, 10, 1);
+//        $item->setCustomName("ゴミ箱");
+//        $p->getInventory()->setItem(28, $item);
+//
+//        $item = Item::get(387, 0, 1);
+//        $item->setCustomName("チャットを送信する(未実装)");
+//        $p->getInventory()->setItem(29, $item);
+//
+//        $item = Item::get(386, 0, 1);
+//        $item->setCustomName("所持ガチャ券 : ".$this->s_gatya);
+//        $p->getInventory()->setItem(30, $item);
+//
+//        $item = Item::get(Item::DRAGON_EGG, 0, 1);
+//        $item->setCustomName("同盟鯖");
+//        $p->getInventory()->setItem(34, $item);
 
         for ($i = 0; $i <= 8; $i++)
         {

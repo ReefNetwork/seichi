@@ -2,7 +2,6 @@
 
 namespace Ree\seichi\form;
 
-use pocketmine\Server;
 use Ree\seichi\main;
 
 class RankingForm implements \pocketmine\form\Form

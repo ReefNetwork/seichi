@@ -96,9 +96,9 @@ class main extends PluginBase implements listener
 		$this->strage = new Config($this->getDataFolder() . "user_strage.yml", Config::YAML);
 		$this->data = new Config($this->getDataFolder() . "user_data.yml", Config::YAML);
 
-//		$this->getServer()->generateLevel("lobby", time(), generatorManager::getGenerator("flat"));
-//		$this->getServer()->generateLevel("leveling_1", time(), generatorManager::getGenerator("default"));
-//		$this->getServer()->generateLevel("public", time(), generatorManager::getGenerator("flat"));
+		$this->getServer()->generateLevel("lobby", time(), generatorManager::getGenerator("flat"));
+		$this->getServer()->generateLevel("leveling_1", time(), generatorManager::getGenerator("default"));
+		$this->getServer()->generateLevel("public", time(), generatorManager::getGenerator("flat"));
 
 		$this->getServer()->loadLevel("lobby");
 		$this->getServer()->loadLevel("leveling_1");
@@ -352,8 +352,8 @@ class main extends PluginBase implements listener
 		if ($block->getId() === Block::STONE_SLAB) {
 			if ($block->getFloorY() === 1) {
 				$p->getInventory()->addItem(Item::get(Item::STONE_SLAB));
-			$p->addActionBarMessage("§e+0.1coin");
-			self::getpT($n)->addCoin(0.1);
+				$p->addActionBarMessage("§e+0.1coin");
+				self::getpT($n)->addCoin(0.1);
 				return;
 			}
 		}
@@ -392,137 +392,137 @@ class main extends PluginBase implements listener
 		}
 	}
 
-	public function onTransaction(InventoryTransactionEvent $ev)
-	{
-		$tr = $ev->getTransaction();
-		$inve = $tr->getInventories();
-
-
-		foreach ($inve as $inv) {
-			foreach ($tr->getActions() as $action) {
-				if ($action instanceof SlotChangeAction) {
-
-					if ($action->getInventory() instanceof PlayerInventory) {
-						$p = $ev->getTransaction()->getSource();
-						$n = $p->getName();
-						$pT = self::getpT($n);
-						$p->getInventory()->close($p);
-
-						switch ($action->getSlot()) {
-							case 19;
-								$pT->s_chestInstance = new StackStrage($pT);
-								$ev->setCancelled();
-								return;
-
-							case 20:
-								$pT->s_chestInstance = new SkilSelect($pT);
-								$ev->setCancelled();
-								return;
-
-							case 23:
-								$ev->setCancelled();
-								ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
-								if (!$pT->s_fly) {
-									if ($pT->s_coin > 1) {
-										$p->sendMessage("§aフライが有効になりました");
-										$pT->s_fly = true;
-										$p->setAllowFlight(true);
-									} else {
-										$p->sendMessage("§cお金が足りません");
-									}
-								} else {
-									$p->sendMessage("§7フライを無効にしました");
-									$ev->setCancelled();
-									$pT->s_fly = false;
-									$p->setAllowFlight(false);
-									$p->setFlying(false);
-								}
-								return;
-
-							case 24:
-								$pT->s_chestInstance = new WorldSelect($pT);
-								$ev->setCancelled();
-								return;
-
-							case 25:
-								ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
-								$this->getScheduler()->scheduleDelayedTask(new TeleportTask($p, $p->getLevel()->getSafeSpawn()), 10);
-								$ev->setCancelled();
-								return;
-
-							case 28:
-								$pT->s_chestInstance = new Dust($pT);
-								$ev->setCancelled();
-								return;
-
-							case 29:
-								$ev->setCancelled();
-								return;
-
-							case 30:
-								$count = 64;
-								if ($pT->s_gatya < 64) {
-									if ($pT->s_gatya <= 0) {
-										$p->sendMessage("ガチャ券がありません");
-									}
-									$count = $pT->s_gatya;
-								}
-								$item = Gatya::getGatya(0, $p);
-								$item->setCount($count);
-								if ($p->getInventory()->canAddItem($item)) {
-									$p->getInventory()->addItem($item);
-								} else {
-									$p->sendMessage("インベントリに空きがありません");
-								}
-								$pT->s_gatya -= $count;
-								$ev->setCancelled();
-								return;
-
-							case 34:
-								$ev->setCancelled();
-								ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
-								$this->getScheduler()->scheduleDelayedTask(new Transfer($p), 10);
-								return;
-
-							case 35:
-								$ev->setCancelled();
-
-								$pT = $this->pT[$n];
-
-								$this->strage->set($n, $pT->s_strage);
-								$this->data->set($n, $pT->getData());
-								$this->strage->save();
-								$this->data->save();
-
-								$pT = new PlayerTask($pT->getPlayer());
-
-								$pT->s_strage = $this->strage->get($n);
-								$pT->setData($this->data->get($n));
-
-								$this->pT[$n] = $pT;
-								$pT->sendLog("plyaerデータを所得しました");
-								return;
-
-							case 0:
-							case 1:
-							case 2:
-							case 3:
-							case 4:
-							case 5:
-							case 6:
-							case 7:
-							case 8:
-								return;
-
-							default:
-								$ev->setCancelled();
-								return;
-						}
-					}
-				}
-			}
-		}
-	}
+//	public function onTransaction(InventoryTransactionEvent $ev)
+//	{
+//		$tr = $ev->getTransaction();
+//		$inve = $tr->getInventories();
+//
+//
+//		foreach ($inve as $inv) {
+//			foreach ($tr->getActions() as $action) {
+//				if ($action instanceof SlotChangeAction) {
+//
+//					if ($action->getInventory() instanceof PlayerInventory) {
+//						$p = $ev->getTransaction()->getSource();
+//						$n = $p->getName();
+//						$pT = self::getpT($n);
+//						$p->getInventory()->close($p);
+//
+//						switch ($action->getSlot()) {
+//							case 19;
+//								$pT->s_chestInstance = new StackStrage($pT);
+//								$ev->setCancelled();
+//								return;
+//
+//							case 20:
+//								$pT->s_chestInstance = new SkilSelect($pT);
+//								$ev->setCancelled();
+//								return;
+//
+//							case 23:
+//								$ev->setCancelled();
+//								ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
+//								if (!$pT->s_fly) {
+//									if ($pT->s_coin > 1) {
+//										$p->sendMessage("§aフライが有効になりました");
+//										$pT->s_fly = true;
+//										$p->setAllowFlight(true);
+//									} else {
+//										$p->sendMessage("§cお金が足りません");
+//									}
+//								} else {
+//									$p->sendMessage("§7フライを無効にしました");
+//									$ev->setCancelled();
+//									$pT->s_fly = false;
+//									$p->setAllowFlight(false);
+//									$p->setFlying(false);
+//								}
+//								return;
+//
+//							case 24:
+//								$pT->s_chestInstance = new WorldSelect($pT);
+//								$ev->setCancelled();
+//								return;
+//
+//							case 25:
+//								ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
+//								$this->getScheduler()->scheduleDelayedTask(new TeleportTask($p, $p->getLevel()->getSafeSpawn()), 10);
+//								$ev->setCancelled();
+//								return;
+//
+//							case 28:
+//								$pT->s_chestInstance = new Dust($pT);
+//								$ev->setCancelled();
+//								return;
+//
+//							case 29:
+//								$ev->setCancelled();
+//								return;
+//
+//							case 30:
+//								$count = 64;
+//								if ($pT->s_gatya < 64) {
+//									if ($pT->s_gatya <= 0) {
+//										$p->sendMessage("ガチャ券がありません");
+//									}
+//									$count = $pT->s_gatya;
+//								}
+//								$item = Gatya::getGatya(0, $p);
+//								$item->setCount($count);
+//								if ($p->getInventory()->canAddItem($item)) {
+//									$p->getInventory()->addItem($item);
+//								} else {
+//									$p->sendMessage("インベントリに空きがありません");
+//								}
+//								$pT->s_gatya -= $count;
+//								$ev->setCancelled();
+//								return;
+//
+//							case 34:
+//								$ev->setCancelled();
+//								ChestGuiManager::CloseInventory($p, $p->x, $p->y, $p->z);
+//								$this->getScheduler()->scheduleDelayedTask(new Transfer($p), 10);
+//								return;
+//
+//							case 35:
+//								$ev->setCancelled();
+//
+//								$pT = $this->pT[$n];
+//
+//								$this->strage->set($n, $pT->s_strage);
+//								$this->data->set($n, $pT->getData());
+//								$this->strage->save();
+//								$this->data->save();
+//
+//								$pT = new PlayerTask($pT->getPlayer());
+//
+//								$pT->s_strage = $this->strage->get($n);
+//								$pT->setData($this->data->get($n));
+//
+//								$this->pT[$n] = $pT;
+//								$pT->sendLog("plyaerデータを所得しました");
+//								return;
+//
+//							case 0:
+//							case 1:
+//							case 2:
+//							case 3:
+//							case 4:
+//							case 5:
+//							case 6:
+//							case 7:
+//							case 8:
+//								return;
+//
+//							default:
+//								$ev->setCancelled();
+//								return;
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	private function checkHigth(Position $pos, Level $level, int $higut = 10)
 	{
