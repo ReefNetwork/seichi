@@ -56,6 +56,7 @@ class SkilSelectForm implements \pocketmine\form\Form
 		{
 			if ($this->list[$data] === true)
 			{
+				$p->sendForm(new SkilUnlockForm($p));
 				return;
 			}
 			$p->sendForm(new SkilCheckForm($this->list[$data]));
