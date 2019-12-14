@@ -96,9 +96,9 @@ class main extends PluginBase implements listener
 		$this->strage = new Config($this->getDataFolder() . "user_strage.yml", Config::YAML);
 		$this->data = new Config($this->getDataFolder() . "user_data.yml", Config::YAML);
 
-		$this->getServer()->generateLevel("lobby", time(), generatorManager::getGenerator("flat"));
-		$this->getServer()->generateLevel("leveling_1", time(), generatorManager::getGenerator("default"));
-		$this->getServer()->generateLevel("public", time(), generatorManager::getGenerator("flat"));
+//		$this->getServer()->generateLevel("lobby", time(), generatorManager::getGenerator("flat"));
+//		$this->getServer()->generateLevel("leveling_1", time(), generatorManager::getGenerator("default"));
+//		$this->getServer()->generateLevel("public", time(), generatorManager::getGenerator("flat"));
 
 		$this->getServer()->loadLevel("lobby");
 		$this->getServer()->loadLevel("leveling_1");
