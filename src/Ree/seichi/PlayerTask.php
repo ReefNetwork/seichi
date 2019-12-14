@@ -490,7 +490,7 @@ class PlayerTask
 //        $item->setCustomName("同盟鯖");
 //        $p->getInventory()->setItem(34, $item);
 
-        for ($i = 0; $i <= 8; $i++)
+        for ($i = 0; $i <= 35; $i++)
         {
             $item = $p->getInventory()->getItem($i);
             $nbt = $item->getNamedTag();
