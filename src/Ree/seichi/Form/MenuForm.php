@@ -120,10 +120,11 @@ class MenuForm implements \pocketmine\form\Form
                 break;
 
             case 4:
-				$pT->s_chestInstance = new SkilSelect($pT ,false);
+				$p->sendForm(new SkilSelectForm($p));
                 break;
 
             case 5:
+				$p->sendMessage("§a>> §rスポーン地点にテレポートしています...");
                 $p->teleport($p->getLevel()->getSafeSpawn());
                 break;
 
@@ -154,7 +155,7 @@ class MenuForm implements \pocketmine\form\Form
                 break;
 
             case 9:
-				$pT->s_chestInstance = new WorldSelect($pT ,false);
+				$p->sendForm(new WorldSelectForm());
             	break;
 
 			case 10:

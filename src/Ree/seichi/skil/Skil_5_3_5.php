@@ -120,4 +120,9 @@ class Skil_5_3_5 extends Skil
 
         return $item;
     }
+
+    public static function getCoolTime()
+	{
+		return 5;
+	}
 }

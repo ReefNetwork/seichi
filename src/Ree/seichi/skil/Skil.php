@@ -106,6 +106,14 @@ class Skil
         return $item;
     }
 
+	/**
+	 * @return int
+	 */
+    public static function getCoolTime()
+	{
+		return 0;
+	}
+
     public static function getNeedskil()
     {
 
