@@ -2,6 +2,7 @@
 
 namespace Ree\seichi\form;
 
+use pocketmine\Player;
 use Ree\seichi\main;
 
 class WorldSelectForm implements \pocketmine\form\Form
@@ -29,7 +30,7 @@ class WorldSelectForm implements \pocketmine\form\Form
         ];
     }
 
-    public function handleResponse(\pocketmine\Player $p, $data): void
+    public function handleResponse(Player $p, $data): void
     {
         if ($data === NULL) {
             return;

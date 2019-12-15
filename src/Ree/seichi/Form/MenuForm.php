@@ -2,25 +2,26 @@
 
 namespace Ree\seichi\form;
 
+use pocketmine\form\Form;
 use Ree\doumei\TransferForm;
 use Ree\reef\form\SyogoForm;
 use Ree\seichi\Gatya;
+use Ree\seichi\PlayerTask;
 use Ree\StackStrage\Virchal\Dust;
 use Ree\StackStrage\Virchal\GatyaStrage;
-use Ree\StackStrage\Virchal\SkilSelect;
-use Ree\StackStrage\Virchal\SkilUnlock;
 use Ree\StackStrage\Virchal\StackStrage;
-use Ree\StackStrage\Virchal\WorldSelect;
 
-class MenuForm implements \pocketmine\form\Form
+class MenuForm implements Form
 {
     /**
-     * @var \Ree\seichi\PlayerTask
+     * @var PlayerTask
      */
     private $pT;
+	/**
+	 * @var string
+	 */
     private $content;
-
-    public function __construct(\Ree\seichi\PlayerTask $pT, string $content = "")
+    public function __construct(PlayerTask $pT, string $content = "")
     {
         $this->pT = $pT;
         $this->content = $content;
@@ -151,7 +152,7 @@ class MenuForm implements \pocketmine\form\Form
                 break;
 
             case 8:
-                $pT->s_chestInstance = new SkilUnlock($pT ,false);
+                $p->sendForm(new SkilUnlockForm($p));
                 break;
 
             case 9:
