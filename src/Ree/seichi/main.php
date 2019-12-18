@@ -256,7 +256,7 @@ class main extends PluginBase implements listener
 		if ($ev->isCancelled()) {
 			return;
 		}
-		if (!ReefAPI::isProtect($block->asPosition())) {
+		if (!ReefAPI::isProtect($block->asPosition() ,$p)) {
 			return;
 		}
 		if (!$this->checkHigth($ev->getBlock()->asPosition(), $ev->getBlock()->getLevel())) {
