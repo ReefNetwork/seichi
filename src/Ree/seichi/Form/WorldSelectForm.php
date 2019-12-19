@@ -18,7 +18,10 @@ class WorldSelectForm implements \pocketmine\form\Form
 					'text' => "ロビー"
 				],
 				[
-					'text' => "整地ワールド"
+					'text' => "整地ワールド1"
+				],
+				[
+					'text' => "整地ワールド2"
 				],
 				[
 					'text' => "公共施設"
@@ -44,18 +47,24 @@ class WorldSelectForm implements \pocketmine\form\Form
                 break;
 
 			case 1:
-				$p->sendMessage("§a>> §r整地ワールドにテレポートしています...");
+				$p->sendMessage("§a>> §r整地ワールド1にテレポートしています...");
 				$level = $server->getServer()->getLevelByName("leveling_1");
 				$p->teleport($level->getSafeSpawn());
 				break;
 
 			case 2:
+				$p->sendMessage("§a>> §r整地ワールド2にテレポートしています...");
+				$level = $server->getServer()->getLevelByName("leveling_2");
+				$p->teleport($level->getSafeSpawn());
+				break;
+
+			case 3:
 				$p->sendMessage("§a>> §r公共施設にテレポートしています...");
 				$level = $server->getServer()->getLevelByName("public");
 				$p->teleport($level->getSafeSpawn());
 				break;
 
-			case 3:
+			case 4:
 				$pT = main::getpT($p->getName());
 				$p->sendForm(new MenuForm($pT));
         }
