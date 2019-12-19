@@ -394,7 +394,7 @@ class main extends PluginBase implements listener
 				break;
 
 			case Item::STICK:
-				if(!isset($this->clickTime[$p->getName()])) $this->clickTime[$p->getName()] = time();
+				if(!isset($this->clickTime[$p->getName()])) $this->clickTime[$p->getName()] = 0;
 				if($this->clickTime[$p->getName()] === time()) return;
 			    
 				$p->sendForm(new MenuForm($pT));
