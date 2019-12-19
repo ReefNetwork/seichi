@@ -86,6 +86,11 @@ class main extends PluginBase implements listener
 	 * @var Config
 	 */
 	private $data;
+	
+	/**
+	 * @var int[]
+	 */
+	private $clickTime = [];
 
 	public function onEnable()
 	{
@@ -389,7 +394,11 @@ class main extends PluginBase implements listener
 				break;
 
 			case Item::STICK:
+				if(!isset($this->clickTime[$p->getName()])) $this->clickTime[$p->getName()] = time();
+				if($this->clickTime[$p->getName()] === time()) return;
+			    
 				$p->sendForm(new MenuForm($pT));
+				$this->clickTime[$p->getName()] = time();
 				break;
 		}
 	}
