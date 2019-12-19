@@ -98,7 +98,7 @@ class main extends PluginBase implements listener
 
 //		$this->getServer()->generateLevel("lobby", time(), generatorManager::getGenerator("flat"));
 //		$this->getServer()->generateLevel("leveling_1", time(), generatorManager::getGenerator("default"));
-		$this->getServer()->generateLevel("leveling_2", time(), generatorManager::getGenerator("default"));
+//		$this->getServer()->generateLevel("leveling_2", time(), generatorManager::getGenerator("default"));
 //		$this->getServer()->generateLevel("public", time(), generatorManager::getGenerator("flat"));
 
 		$this->getServer()->loadLevel("lobby");
