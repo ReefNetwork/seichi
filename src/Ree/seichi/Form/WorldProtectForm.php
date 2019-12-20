@@ -30,17 +30,21 @@ class WorldProtectForm implements Form
 			'text' => '土地保護をする'
 		];
 		$i = 1;
-		foreach (main::getMain()->getProtect()->get($this->p->getName()) as $world)
+		if (main::getMain()->getProtect()->exists($this->p->getName()))
 		{
-			foreach ($world as $data)
+			foreach (main::getMain()->getProtect()->get($this->p->getName()) as $world)
 			{
-				$buttons[] = [
-					'text' => "ID : ".$data["id"]."\n".'の土地を管理する'
-				];
-				$this->list[$i] = $data;
-				$i++;
+				foreach ($world as $data)
+				{
+					$buttons[] = [
+						'text' => "ID : ".$data["id"]."\n".'の土地を管理する'
+					];
+					$this->list[$i] = $data;
+					$i++;
+				}
 			}
 		}
+
 		$buttons[] = [
 			'text' => '戻る'
 		];
