@@ -3,10 +3,8 @@
 namespace Ree\seichi\form;
 
 use pocketmine\form\Form;
-use pocketmine\item\Item;
 use Ree\doumei\TransferForm;
 use Ree\reef\form\SyogoForm;
-use Ree\reef\ReefAPI;
 use Ree\seichi\Gatya;
 use Ree\seichi\PlayerTask;
 use Ree\StackStrage\Virchal\Dust;
@@ -172,9 +170,7 @@ class MenuForm implements Form
 				break;
 
 			case 12:
-				$array[] = "クリックでメニューが開きます";
-				$p->getInventory()->addItem(Item::get(Item::WOODEN_AXE)->setLore($array));
-				$p->sendMessage(ReefAPI::GOOD."土地保護ようの斧を取り出しました");
+				$p->sendForm(new WorldProtectForm($p));
 				break;
 
 			case 13:
