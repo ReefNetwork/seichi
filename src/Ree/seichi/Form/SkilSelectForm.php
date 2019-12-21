@@ -32,7 +32,7 @@ class SkilSelectForm implements \pocketmine\form\Form
 			$this->list[] = $skilname;
 		}
 		$buttons[] = [
-			'text' => "スキルをアンロックする"
+			'text' => "エフェクトを変更する"
 		];
 		$this->list[] = true;
 		$buttons[] = [
@@ -56,7 +56,7 @@ class SkilSelectForm implements \pocketmine\form\Form
 		{
 			if ($this->list[$data] === true)
 			{
-				$p->sendForm(new SkilUnlockForm($p));
+				$p->sendForm(new BreakEffectForm($p));
 				return;
 			}
 			$p->sendForm(new SkilCheckForm($this->list[$data]));

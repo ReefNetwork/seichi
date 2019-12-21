@@ -66,7 +66,7 @@ class MenuForm implements Form
 					'text' => "ガチャ券を取り出す\n所持枚数 : " . $gatya
 				],
 				[
-					'text' => "スキルツリー"
+					'text' => "スキルを開放する"
 				],
 				[
 					'text' => "ワールド移動"

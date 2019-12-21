@@ -258,6 +258,7 @@ class main extends PluginBase implements listener
 		$n = $p->getName();
 		$item = $ev->getItem();
 		$block = $ev->getBlock();
+		$pos = $block->asPosition();
 		$pT = self::getpT($n);
 
 		if ($ev->isCancelled()) {
@@ -283,8 +284,7 @@ class main extends PluginBase implements listener
 			return;
 		}
 
-		$particle = new SnowballPoofParticle($block->asVector3());
-		$p->getLevel()->addParticle($particle);
+		$pT->s_nowbreakEffect::onRun($pos);
 
 		if (in_array($ev->getBlock()->getId(), [16, 21, 56, 129, 153])) {
 			$add = Fortune::doFortune($item);

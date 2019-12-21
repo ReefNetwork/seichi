@@ -30,6 +30,7 @@ use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 
 use Ree\reef\ReefAPI;
+use Ree\seichi\skil\background\BreakEffect;
 use Ree\seichi\skil\Skil;
 use Ree\seichi\Task\ImmobileTask;
 use Ree\seichi\Task\TeleportTask;
@@ -54,6 +55,11 @@ class PlayerTask
      * PlayerNowSkil
      */
     public $s_nowSkil = NULL;
+
+	/**
+	 * @var BreakEffect
+	 */
+	public $s_nowbreakEffect;
 
     /*
      * @var array
@@ -96,6 +102,11 @@ class PlayerTask
      * SkilUnlockList
      */
     public $s_skil = ["Skil"];
+
+	/**
+	 * @var array
+	 */
+    public $s_breakEffect = ["BreakEffect"];
 
     /**
      * @var int
@@ -167,7 +178,7 @@ class PlayerTask
      */
     public $task;
 
-    /**
+	/**
      * PlayerTask constructor.
      * @param Player $p
      */
@@ -198,6 +209,20 @@ class PlayerTask
         $this->s_experience = $data["experience"];
         $this->s_gatya = $data["gatya"];
 
+        if (isset ($data["breakEffect"]))
+		{
+			$this->s_breakEffect = $data["breakEffect"];
+		}
+		if (isset ($data["now_breakEffect"]))
+		{
+			$effect = $data["now_breakEffect"];
+			$effect = 'Ree\seichi\skil\background\\' . $effect;
+			$this->s_nowbreakEffect = $effect;
+		}else{
+			$effect = 'Ree\seichi\skil\background\\' . BreakEffect::getClassName();
+			$this->s_nowbreakEffect = $effect;
+		}
+
         $skil = $data["nowskil"];
         $skil = 'Ree\seichi\skil\\' . $skil;
         $this->s_nowSkil = $skil;
@@ -212,11 +237,13 @@ class PlayerTask
     {
         $data["level"] = $this->s_level;
         $data["skil"] = $this->s_skil;
+		$data["breakEffect"] = $this->s_breakEffect;
         $data["skilpoint"] = $this->s_skilpoint;
         $data["mana"] = $this->s_mana;
         $data["coin"] = $this->s_coin;
         $data["experience"] = $this->s_experience;
         $data["nowskil"] = $this->s_nowSkil::getClassName();
+		$data["now_breakEffect"] = $this->s_nowbreakEffect::getClassName();
         $data["gatya"] = $this->s_gatya;
 
         return $data;
