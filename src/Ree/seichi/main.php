@@ -358,9 +358,9 @@ class main extends PluginBase implements listener
 		}
 		if ($block->getId() === Block::STONE_SLAB) {
 			if ($block->getFloorY() === 1) {
-				$p->getInventory()->addItem(Item::get(Item::STONE_SLAB));
-				$p->addActionBarMessage("§e+0.1coin");
-				self::getpT($n)->addCoin(0.1);
+//				$p->getInventory()->addItem(Item::get(Item::STONE_SLAB));
+//				$p->addActionBarMessage("§e+0.1coin");
+//				self::getpT($n)->addCoin(0.1);
 				return;
 			}
 		}
