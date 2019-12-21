@@ -5,7 +5,6 @@ namespace Ree\seichi\form;
 use pocketmine\form\Form;
 use pocketmine\item\Item;
 use pocketmine\Player;
-use Ree\reef\form\ProtectForm;
 use Ree\reef\main;
 use Ree\reef\ReefAPI;
 
