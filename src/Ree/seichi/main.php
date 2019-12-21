@@ -46,6 +46,7 @@ use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 
 use Ree\reef\ReefAPI;
+use Ree\seichi\event\ChristmasGatya2019;
 use Ree\seichi\form\MenuForm;
 use Ree\seichi\skil\background\BreakMana;
 use Ree\seichi\skil\background\Fortune;
@@ -305,6 +306,12 @@ class main extends PluginBase implements listener
 
 		BreakMana::onBreak($pT);
 		$pT->sendBar();
+		if (mt_rand(1 ,100) === 1)
+		{
+			$p->getInventory()->addItem(ChristmasGatya2019::getGatya(0));
+			$p->sendTip("§aChrist§cmas§rガチャ券を見つけた");
+		}
+
 		if ($p->isSneaking()) {
 			$pT->addxp($ev->getBlock()->asVector3());
 			foreach ($ev->getDrops() as $drop) {
@@ -382,13 +389,25 @@ class main extends PluginBase implements listener
 						$p->sendTip("§cインベントリがいっぱいです");
 						return;
 					}
+					if ($tag->offsetExists(ChristmasGatya2019::CHRISTMAS))
+					{
+						$bool = ChristmasGatya2019::onGatya($p);
+						if ($bool) {
+							$item->setCount(1);
+							$p->getInventory()->removeItem($item);
+							$p->sendTip(ReefAPI::GOOD."ガチャを引きました");
+						} else {
+							$p->sendTip(ReefAPI::BAD."§cインベントリがいっぱいです");
+						}
+						return;
+					}
 					$bool = Gatya::onGatya($p);
 					if ($bool) {
 						$item->setCount(1);
 						$p->getInventory()->removeItem($item);
-						$p->sendTip("§aガチャを引きました");
+						$p->sendTip(ReefAPI::GOOD."ガチャを引きました");
 					} else {
-						$p->sendTip("§cインベントリがいっぱいです");
+						$p->sendTip(ReefAPI::BAD."インベントリがいっぱいです");
 					}
 				}
 				break;
