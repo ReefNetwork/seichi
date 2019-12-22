@@ -31,7 +31,7 @@ class Gatya
      */
     public static function onGatya(Player $p): bool
     {
-        $rand = mt_rand(1, 1000);
+        $rand = mt_rand(1, 1500);
         if ($rand == 1)
         {
             $rand = mt_rand(1 ,5);

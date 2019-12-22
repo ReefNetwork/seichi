@@ -20,29 +20,19 @@ namespace Ree\seichi;
 use pocketmine\block\Block;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
-use pocketmine\inventory\PlayerInventory;
 use pocketmine\item\enchantment\Enchantment;
-use pocketmine\level\generator\GeneratorManager;
 use pocketmine\level\Level;
-use pocketmine\level\particle\AngryVillagerParticle;
-use pocketmine\level\particle\CriticalParticle;
-use pocketmine\level\particle\DustParticle;
-use pocketmine\level\particle\ExplodeParticle;
-use pocketmine\level\particle\HugeExplodeParticle;
-use pocketmine\level\particle\SnowballPoofParticle;
 use pocketmine\level\Position;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
 use pocketmine\Server;
 use pocketmine\item\Item;
-use pocketmine\inventory\transaction\action\SlotChangeAction;
 
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 
 use Ree\reef\ReefAPI;
@@ -53,14 +43,7 @@ use Ree\seichi\skil\background\Fortune;
 use Ree\seichi\Task\FlyTask;
 use Ree\seichi\Task\InventoryUpdateTask;
 use Ree\seichi\Task\ScoreBoardTask;
-use Ree\seichi\Task\TeleportTask;
-use Ree\seichi\Task\Transfer;
-use Ree\StackStrage\ChestGuiManager;
 use Ree\StackStrage\StackStrage_API;
-use Ree\StackStrage\Virchal\Dust;
-use Ree\StackStrage\Virchal\SkilSelect;
-use Ree\StackStrage\Virchal\StackStrage;
-use Ree\StackStrage\Virchal\WorldSelect;
 
 
 class main extends PluginBase implements listener
@@ -137,6 +120,12 @@ class main extends PluginBase implements listener
 		$item = Gatya::getGatya(Gatya::APPLE1);
 		Item::addCreativeItem($item);
 		$item = Gatya::getGatya(0);
+		Item::addCreativeItem($item);
+		for ($i = 1; $i <= 5; $i++) {
+			$item = ChristmasGatya2019::getGatya($i);
+			Item::addCreativeItem($item);
+		}
+		$item = ChristmasGatya2019::getGatya(0);
 		Item::addCreativeItem($item);
 
 		echo "Reef_core >> Complete\n";

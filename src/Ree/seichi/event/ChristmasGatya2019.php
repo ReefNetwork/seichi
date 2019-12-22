@@ -38,7 +38,7 @@ class ChristmasGatya2019
      */
     public static function onGatya(Player $p): bool
     {
-        $rand = mt_rand(1, 100);
+        $rand = mt_rand(1, 1000);
         if ($rand == 5)
         {
             $rand = mt_rand(1 ,10);
@@ -117,7 +117,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aChrist§cmas§rガチャ券\n\n所有者:" . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 0);
+                $nbt->setInt(self::GATYA, 0);
 				$nbt->setInt(self::CHRISTMAS, 0);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
@@ -128,7 +128,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aChrist§cmas§aReef§ePickaxe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, self::PICKAXE);
+                $nbt->setInt(self::GATYA, 1);
 				$nbt->setInt(self::CHRISTMAS, 0);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
@@ -142,7 +142,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aChrist§cmas§aReef§eAxe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, self::AXE);
+                $nbt->setInt(self::GATYA, 2);
 				$nbt->setInt(self::CHRISTMAS, 0);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
@@ -156,7 +156,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aChrist§cmas§aReef§eShovel\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, self::SHOVEL);
+                $nbt->setInt(self::GATYA, 3);
 				$nbt->setInt(self::CHRISTMAS, 0);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
@@ -170,7 +170,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aChrist§cmas§aReef§eSword\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, self::SWORD);
+                $nbt->setInt(self::GATYA, 4);
 				$nbt->setInt(self::CHRISTMAS, 0);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
@@ -184,7 +184,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aChrist§cmas§aReef§eHoe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, self::HOE);
+                $nbt->setInt(self::GATYA, 5);
 				$nbt->setInt(self::CHRISTMAS, 0);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
@@ -197,7 +197,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aReef§eHelmet\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 6);
+                $nbt->setInt(self::GATYA, 6);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::PROTECTION), 10));
@@ -209,7 +209,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aReef§eElytra\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 7);
+                $nbt->setInt(self::GATYA, 7);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::PROTECTION), 10));
@@ -221,7 +221,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aReef§eLeggings\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 8);
+                $nbt->setInt(self::GATYA, 8);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::PROTECTION), 10));
@@ -234,7 +234,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§aReef§eBoots\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 9);
+                $nbt->setInt(self::GATYA, 9);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::PROTECTION), 10));
@@ -246,7 +246,7 @@ class ChristmasGatya2019
 				$item = Item::get(Item::DIAMOND_PICKAXE);
 				$item->setCustomName("§aChrist§cmas§aReef§ePickaxe\n\n§2所有者 : " . $n);
 				$nbt = $item->getNamedTag();
-				$nbt->setInt(gatya::GATYA, self::PICKAXE);
+				$nbt->setInt(self::GATYA, self::PICKAXE);
 				$nbt->setInt(self::CHRISTMAS, 0);
 				$nbt->setInt(StackStrage_API::NOTSTACK, 1);
 				$nbt->setString(StackStrage_API::PLAYERNAME, $n);
@@ -261,7 +261,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§dSllk§ePickaxe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 11);
+                $nbt->setInt(self::GATYA, 11);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 5));
@@ -274,7 +274,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§dSllk§eShovel\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 31);
+                $nbt->setInt(self::GATYA, 31);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 5));
@@ -287,7 +287,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§dSllk§eAxe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 51);
+                $nbt->setInt(self::GATYA, 51);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 5));
@@ -300,7 +300,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§bSimple§ePickaxe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 71);
+                $nbt->setInt(self::GATYA, 71);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 1));
@@ -312,7 +312,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§bSimple§eShovel\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 121);
+                $nbt->setInt(self::GATYA, 121);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 1));
@@ -324,12 +324,12 @@ class ChristmasGatya2019
                 $item->setCustomName("§eLucky§ePickaxe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, 171);
+                $nbt->setInt(self::GATYA, 171);
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 1));
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::FORTUNE), 10));
-                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Gatya::ENCHANT_ADD_MANA), 10));
+                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(self::ENCHANT_ADD_MANA), 10));
                 break;
 
             case self::APPLE1:
@@ -337,7 +337,7 @@ class ChristmasGatya2019
                 $item->setCustomName("§eガチャリンゴ§r(§b小§r)\n食べると回復するよ!!!");
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 0, 1);
-                $nbt->setInt(gatya::GATYA, self::APPLE1);
+                $nbt->setInt(self::GATYA, self::APPLE1);
                 $nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
                 $item->setNamedTag($nbt);
                 break;
@@ -346,7 +346,7 @@ class ChristmasGatya2019
                 $item = Item::get(Item::EXPERIENCE_BOTTLE  ,0 , 1);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                $nbt->setInt(gatya::GATYA, self::XP);
+                $nbt->setInt(self::GATYA, self::XP);
                 $nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
                 $item->setNamedTag($nbt);
                 break;
@@ -360,7 +360,7 @@ class ChristmasGatya2019
                         $item->setCustomName("§eガチャリンゴ§r(§b小§r)\n食べると回復するよ!!!");
                         $nbt = $item->getNamedTag();
                         $nbt->setInt(StackStrage_API::NOTSTACK, 0, 1);
-                        $nbt->setInt(gatya::GATYA, self::APPLE1);
+                        $nbt->setInt(self::GATYA, self::APPLE1);
                         $nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
                         $item->setNamedTag($nbt);
                         break;
@@ -370,7 +370,7 @@ class ChristmasGatya2019
                         $item->setCustomName("§eガチャリンゴ§r(§b小§r)\n食べると回復するよ!!!");
                         $nbt = $item->getNamedTag();
                         $nbt->setInt(StackStrage_API::NOTSTACK, 0, 1);
-                        $nbt->setInt(gatya::GATYA, self::APPLE1);
+                        $nbt->setInt(self::GATYA, self::APPLE1);
                         $nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
                         $item->setNamedTag($nbt);
                         break;
@@ -379,7 +379,7 @@ class ChristmasGatya2019
                         $item = Item::get(Item::EXPERIENCE_BOTTLE  ,0 , $count);
                         $nbt = $item->getNamedTag();
                         $nbt->setInt(StackStrage_API::NOTSTACK, 1);
-                        $nbt->setInt(gatya::GATYA, self::XP);
+                        $nbt->setInt(self::GATYA, self::XP);
                         $nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
                         $item->setNamedTag($nbt);
                         break;

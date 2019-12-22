@@ -71,7 +71,7 @@ class WorldProtectForm implements Form
 			default:
 				if (isset($this->list[$data]))
 				{
-					$p->sendForm(new ProtectAdminForm($p));
+					$p->sendForm(new ProtectAdminForm($p ,$this->list[$data]));
 				}else{
 					$pT = \Ree\seichi\main::getpT($p->getName());
 					$p->sendForm(new MenuForm($pT));
