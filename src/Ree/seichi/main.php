@@ -265,7 +265,7 @@ class main extends PluginBase implements listener
 		if ($block->getId() === Block::STONE_SLAB) {
 			if ($block->getFloorY() === 1) {
 				$ev->setCancelled();
-				$p->addActionBarMessage("§ry座標が1ブロックのハーフブロックは破壊することが出来ません");
+				$p->addActionBarMessage(ReefAPI::BAD."y座標が1ブロックのハーフブロックは破壊することが出来ません");
 				return;
 			}
 		}

@@ -232,6 +232,11 @@ class PlayerTask
 			$class = BreakEffect::getClassName();
 			$effect = 'Ree\seichi\skil\background\\' . $class;
 			$this->getPlayer()->sendMessage(ReefAPI::ERROR."セーブデータを修復しました1部設定がリセットされてる可能性があります");
+			if (!class_exists($effect))
+			{
+				$this->save = false;
+				$this->getPlayer()->kick(ReefAPI::ERROR."エラーが発生しました");
+			}
 		}
 		$this->s_nowbreakEffect = $effect;
 
@@ -260,7 +265,7 @@ class PlayerTask
 
 			try {
 				$data["nowskil"] = $this->s_nowSkil::getClassName();
-				$data["now_breakEffect"] = $this->s_nowbreakEffect::getClassName();
+//				$data["now_breakEffect"] = $this->s_nowbreakEffect::getClassName();
 			} catch (\Exception $ex) {
 				$data["nowskil"] = Skil::getClassName();
 				$data["now_breakEffect"] = BreakEffect::getClassName();
