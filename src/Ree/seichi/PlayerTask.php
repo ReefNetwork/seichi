@@ -178,7 +178,14 @@ class PlayerTask
 	/**
 	 * @var int[]
 	 */
-	public $task;
+	public $task = [];
+
+	/**
+	 * @var bool
+	 *
+	 * isPlayerDataSave
+	 */
+	private $save = true;
 
 	/**
 	 * PlayerTask constructor.
@@ -215,13 +222,18 @@ class PlayerTask
 			$this->s_breakEffect = $data["breakEffect"];
 		}
 		if (isset ($data["now_breakEffect"])) {
-			$effect = $data["now_breakEffect"];
-			$effect = 'Ree\seichi\skil\background\\' . $effect;
-			$this->s_nowbreakEffect = $effect;
+			$class = $data["now_breakEffect"];
 		} else {
-			$effect = 'Ree\seichi\skil\background\\' . BreakEffect::getClassName();
-			$this->s_nowbreakEffect = $effect;
+			$class = BreakEffect::getClassName();
 		}
+		$effect = 'Ree\seichi\skil\background\\' . $class;
+		if (!class_exists($effect)) {
+			$this->getPlayer()->sendMessage(ReefAPI::ERROR."1部セーブデータが破損しています");
+			$class = BreakEffect::getClassName();
+			$effect = 'Ree\seichi\skil\background\\' . $class;
+			$this->getPlayer()->sendMessage(ReefAPI::ERROR."セーブデータを修復しました1部設定がリセットされてる可能性があります");
+		}
+		$this->s_nowbreakEffect = $effect;
 
 		$skil = $data["nowskil"];
 		$skil = 'Ree\seichi\skil\\' . $skil;
@@ -235,23 +247,27 @@ class PlayerTask
 	 */
 	public function getData(): array
 	{
-		$data["level"] = $this->s_level;
-		$data["skil"] = $this->s_skil;
-		$data["breakEffect"] = $this->s_breakEffect;
-		$data["skilpoint"] = $this->s_skilpoint;
-		$data["mana"] = $this->s_mana;
-		$data["coin"] = $this->s_coin;
-		$data["experience"] = $this->s_experience;
-		$data["gatya"] = $this->s_gatya;
+		if ($this->save)
+		{
+			$data["level"] = $this->s_level;
+			$data["skil"] = $this->s_skil;
+			$data["breakEffect"] = $this->s_breakEffect;
+			$data["skilpoint"] = $this->s_skilpoint;
+			$data["mana"] = $this->s_mana;
+			$data["coin"] = $this->s_coin;
+			$data["experience"] = $this->s_experience;
+			$data["gatya"] = $this->s_gatya;
 
-		try {
-			$data["nowskil"] = $this->s_nowSkil::getClassName();
-			$data["now_breakEffect"] = $this->s_nowbreakEffect::getClassName();
-		} catch (\Exception $ex) {
-			$data["nowskil"] = Skil::getClassName();
-			$data["now_breakEffect"] = BreakEffect::getClassName();
-			Server::getInstance()->broadcastMessage(ReefAPI::ERROR."データ保存でエラーが発生しました");
+			try {
+				$data["nowskil"] = $this->s_nowSkil::getClassName();
+				$data["now_breakEffect"] = $this->s_nowbreakEffect::getClassName();
+			} catch (\Exception $ex) {
+				$data["nowskil"] = Skil::getClassName();
+				$data["now_breakEffect"] = BreakEffect::getClassName();
+				Server::getInstance()->broadcastMessage(ReefAPI::ERROR . "データ保存でエラーが発生しました");
+			}
 		}
+
 
 
 		return $data;
