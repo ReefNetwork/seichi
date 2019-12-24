@@ -26,7 +26,10 @@ class ProtectAdminForm implements Form
 	public function jsonSerialize()
 	{
 		$data = $this->data;
-		$string = 'スタート地点 x : '.$data["x1"].'  y : '.$data["z1"]."\n".'最終地点 x : '.$data["x2"].'  z : '.$data["z2"]."\n".'エンティティカウント : '.$data["entityCount"]."\n".'ID : '.$data["id"];
+		$x = $data["x2"] - $data["x1"];
+		$z = $data["z2"] - $data["z1"];
+		$count = $x * $z;
+		$string = 'スタート地点 x : '.$data["x1"].'  y : '.$data["z1"]."\n".'最終地点 x : '.$data["x2"].'  z : '.$data["z2"]."\n".'  土地の大きさ : '.$count."\n".'エンティティカウント : '.$data["entityCount"]."\n".'ID : '.$data["id"];
 		return [
 			'type' => 'form',
 			'title' => '土地保護管理',
