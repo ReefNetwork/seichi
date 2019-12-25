@@ -47,7 +47,7 @@ class Gatya
         switch ($rand) {
             case $rand > 0 && $rand < 5:
                 Server::getInstance()->broadcastMessage("§b" . $p->getName() . "§rさんが§aReef§eTool§rを引きました");
-                $webhook = ReefAPI::getWebhook();
+                $webhook = ReefAPI::getWebhook(1);
                 $content = new Content();
                 $content->setText("§b" . $p->getName() . "§rさんが§aReef§eTool§rを引きました");
                 $webhook->add($content);
@@ -60,7 +60,7 @@ class Gatya
 
             case 5:
                 Server::getInstance()->broadcastMessage("§b" . $p->getName() . "§rさんが§aReef§eTool§rを引きましたwww");
-                $webhook = ReefAPI::getWebhook();
+				$webhook = ReefAPI::getWebhook(1);
                 $content = new Content();
                 $content->setText("§b" . $p->getName() . "§rさんが§aReef§eTool§rを引きましたwww");
                 $webhook->add($content);
@@ -73,7 +73,7 @@ class Gatya
 
             case $rand > 5 && $rand < 10:
                 Server::getInstance()->broadcastMessage("§b" . $p->getName() . "§rさんが§aReef§eArmor§rを引きました");
-                $webhook = ReefAPI::getWebhook();
+				$webhook = ReefAPI::getWebhook(1);
                 $content = new Content();
                 $content->setText("§b" . $p->getName() . "§rさんが§aReef§eArmor§rを引きました");
                 $webhook->add($content);
