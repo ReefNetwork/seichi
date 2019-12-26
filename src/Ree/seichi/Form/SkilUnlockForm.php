@@ -49,7 +49,7 @@ class SkilUnlockForm implements Form
 		return [
 			'type' => 'form',
 			'title' => 'スキル解禁',
-			'content' => "",
+			'content' => "所持スキルポイント : ".$pT->s_skilpoint,
 			'buttons' => $buttons,
 		];
 	}
