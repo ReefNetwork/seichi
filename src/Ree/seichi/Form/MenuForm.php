@@ -4,6 +4,7 @@ namespace Ree\seichi\form;
 
 use pocketmine\form\Form;
 use Ree\doumei\TransferForm;
+use Ree\reef\form\BonusCode;
 use Ree\reef\form\SyogoForm;
 use Ree\seichi\Gatya;
 use Ree\seichi\PlayerTask;
@@ -79,6 +80,9 @@ class MenuForm implements Form
 				],
 				[
 					'text' => "土地保護システム"
+				],
+				[
+					'text' => "ボーナスコード"
 				],
 				[
 					'text' => "同盟鯖"
@@ -174,6 +178,10 @@ class MenuForm implements Form
 				break;
 
 			case 13:
+				$p->sendForm(new BonusCode());
+				break;
+
+			case 14:
 				$p->sendForm(new TransferForm());
 				break;
 		}

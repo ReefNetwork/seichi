@@ -34,6 +34,7 @@ use pocketmine\Server;
 use Ree\reef\ReefAPI;
 use Ree\seichi\skil\background\BreakEffect;
 use Ree\seichi\skil\Skil;
+use Ree\seichi\Task\CoolTimeTask;
 use Ree\seichi\Task\ImmobileTask;
 use Ree\seichi\Task\TeleportTask;
 use Ree\StackStrage\ChestGuiManager;
@@ -304,7 +305,7 @@ class PlayerTask
 		$level = $this->s_level;
 
 		$level = $level - 4;
-		$mana = $level * 10;
+		$mana = $level * 13;
 		$mana = $mana + 100;
 
 		return $mana;
@@ -416,14 +417,18 @@ class PlayerTask
 	{
 		if ($this->s_nowSkil) {
 			$skil = $this->s_nowSkil;
-
+			if ($this->s_nowSkil::getCoolTime())
+			{
+				$this->s_coolTime = $this->s_nowSkil::getCoolTime();
+				main::getMain()->getScheduler()->scheduleDelayedTask(new CoolTimeTask($this) ,$this->s_nowSkil::getCoolTime());
+			}
 			$space = $this->s_nowSkil::getSpace($block, $block->getFloorX(), $block->getFloorY(), $block->getFloorZ(), $this->getPlayer());
 			$this->s_running = true;
 			foreach ($space as $vec3) {
 				$bl = $this->getPlayer()->getLevel()->getBlock($vec3);
 				if ($vec3 == $block->asVector3()) {
 				} elseif ($bl->getId() !== 0) {
-					$bl->level->useBreakOn($vec3, $Item, $this->getPlayer());
+					$bl->level->useBreakOn($vec3, $item, $this->getPlayer());
 				}
 			}
 			$this->s_running = false;

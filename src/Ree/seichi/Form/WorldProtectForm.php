@@ -29,8 +29,10 @@ class WorldProtectForm implements Form
 			'text' => '土地保護をする'
 		];
 		$i = 1;
+		$key= 0;
 		if (main::getMain()->getProtect()->exists($this->p->getName()))
 		{
+			$keys = array_keys(main::getMain()->getProtect()->get($this->p->getName()));
 			foreach (main::getMain()->getProtect()->get($this->p->getName()) as $world)
 			{
 				foreach ($world as $data)
@@ -38,9 +40,11 @@ class WorldProtectForm implements Form
 					$buttons[] = [
 						'text' => "ID : ".$data["id"]."\n".'の土地を管理する'
 					];
+					$data["level"] = $keys[$key];
 					$this->list[$i] = $data;
 					$i++;
 				}
+				$key++;
 			}
 		}
 

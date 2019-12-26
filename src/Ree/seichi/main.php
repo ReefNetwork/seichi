@@ -21,6 +21,7 @@ use pocketmine\block\Block;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\item\enchantment\Enchantment;
+use pocketmine\level\generator\GeneratorManager;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\plugin\PluginBase;
@@ -85,7 +86,7 @@ class main extends PluginBase implements listener
 		$this->strage = new Config($this->getDataFolder() . "user_strage.yml", Config::YAML);
 		$this->data = new Config($this->getDataFolder() . "user_data.yml", Config::YAML);
 
-//		$this->getServer()->generateLevel("lobby", time(), generatorManager::getGenerator("flat"));
+//		$this->getServer()->generateLevel("lobby", time(), GeneratorManager::getGenerator("flat"));
 //		$this->getServer()->generateLevel("leveling_1", time(), generatorManager::getGenerator("default"));
 //		$this->getServer()->generateLevel("leveling_2", time(), generatorManager::getGenerator("default"));
 //		$this->getServer()->generateLevel("public", time(), generatorManager::getGenerator("flat"));
@@ -295,11 +296,6 @@ class main extends PluginBase implements listener
 
 		BreakMana::onBreak($pT);
 		$pT->sendBar();
-		if (mt_rand(1 ,100) === 1)
-		{
-			$p->getInventory()->addItem(ChristmasGatya2019::getGatya(0));
-			$p->sendTip("§aChrist§cmas§rガチャ券を見つけた");
-		}
 
 		if ($p->isSneaking()) {
 			$pT->addxp($ev->getBlock()->asVector3());
@@ -316,6 +312,18 @@ class main extends PluginBase implements listener
 			$pT->addCoin(0.1);
 		} else {
 			$p->sendTip("§cSkil発動に必要なマナが足りません");
+			$pT->addxp($ev->getBlock()->asVector3());
+			foreach ($ev->getDrops() as $drop) {
+				StackStrage_API::add($p, $drop);
+			}
+			$ev->setDrops([]);
+			$pT->addCoin(0.1);
+			return;
+		}
+
+		if ($pT->s_coolTime)
+		{
+			$p->sendTip(ReefAPI::BAD.'スキルはクールタイム中です');
 			$pT->addxp($ev->getBlock()->asVector3());
 			foreach ($ev->getDrops() as $drop) {
 				StackStrage_API::add($p, $drop);
