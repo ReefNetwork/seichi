@@ -8,8 +8,7 @@
 
 ReefServerMainSystem
 
-コードの参考になるかもしれません
-
+くそ汚いのでそのうち書き直します
 # Link
 
 [Discord](https://discord.gg/M4A6cak)
