@@ -19,6 +19,7 @@ class Skil
         "Skil_2_2_3",
         "Skil_3_3_3",
         "Skil_5_3_5",
+		"Skil_7_5_7",
     ];
 
     /**

@@ -7,6 +7,7 @@ namespace Ree\seichi;
 use bboyyu51\pmdiscord\Sender;
 use bboyyu51\pmdiscord\structure\Content;
 use bboyyu51\pmdiscord\structure\Embeds;
+use Composer\Command\SelfUpdateCommand;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
@@ -84,7 +85,7 @@ class Gatya
                 $p->sendMessage("§e超大あたり");
                 break;
 
-            case $rand > 10 && $rand < 170:
+            case $rand > 10 && $rand < 250:
                 $p->sendMessage("§eあたり");
                 break;
 
@@ -321,6 +322,10 @@ class Gatya
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Gatya::ENCHANT_ADD_MANA), 10));
                 break;
 
+			case $rand > 200 && $rand < 250:
+				$item = self::getGatya(self::APPLE2);
+				break;
+
             case self::APPLE1:
                 $item = Item::get(Item::GOLDEN_APPLE, 0, 1);
                 $item->setCustomName("§eガチャリンゴ§r(§b小§r)\n食べると回復するよ!!!");
@@ -330,6 +335,16 @@ class Gatya
                 $nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
                 $item->setNamedTag($nbt);
                 break;
+
+			case self::APPLE2:
+				$item = Item::get(Item::GOLDEN_APPLE, 0, 1);
+				$item->setCustomName("§eガチャリンゴ§r(§e大§r)\n食べると回復するよ!!!");
+				$nbt = $item->getNamedTag();
+				$nbt->setInt(StackStrage_API::NOTSTACK, 0, 1);
+				$nbt->setInt(gatya::GATYA, self::APPLE2);
+				$nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
+				$item->setNamedTag($nbt);
+				break;
 
             case self::XP:
                 $item = Item::get(Item::EXPERIENCE_BOTTLE  ,0 , 1);

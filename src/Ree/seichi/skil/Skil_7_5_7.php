@@ -40,36 +40,37 @@ class Skil_7_5_7 extends Skil
         {
             case 0:
                 $sx = 0;
-                $mx = 4;
-                $sz = -2;
-                $mz = 2;
+                $mx = 6;
+                $sz = -3;
+                $mz = 3;
                 break;
             case 1:
-                $sx = -2;
-                $mx = 2;
+                $sx = -3;
+                $mx = 3;
                 $sz = 0;
-                $mz = 4;
+                $mz = 6;
                 break;
             case 2:
-                $sx = -4;
+                $sx = -6;
                 $mx = 0;
-                $sz = -2;
-                $mz = 2;
+                $sz = -3;
+                $mz = 3;
                 break;
             case 3:
-                $sx = -2;
-                $mx = 2;
-                $sz = -4;
+                $sx = -3;
+                $mx = 3;
+                $sz = -6;
                 $mz = 0;
                 break;
             default:
                 \Ree\seichi\main::getpT($p->getName())->errer("line" . __LINE__ . " 不正な方角");
+                return [];
         }
 
         if ($p->getFloorY() > $y) {
-            for ($x = -2; $x <= 2; $x++) {
-                for ($y = -2; $y <= 0; $y++) {
-                    for ($z = -2; $z <= 2; $z++) {
+            for ($x = -3; $x <= 3; $x++) {
+                for ($y = -4; $y <= 0; $y++) {
+                    for ($z = -3; $z <= 3; $z++) {
                         $bl = $block->add($x, $y, $z);
                         $space[] = $bl->asVector3();
                     }
@@ -77,31 +78,40 @@ class Skil_7_5_7 extends Skil
             }
             return $space;
         }
-        if ($p->getFloorY() == $y) {
-            for ($x = $sx; $x <= $mx; $x++) {
-                for ($y = 0; $y <= 2; $y++) {
-                    for ($z = $sz; $z <= $mz; $z++) {
-                        $bl = $block->add($x, $y, $z);
-                        $space[] = $bl->asVector3();
-                    }
-                }
-            }
-            return $space;
-        }
+
+		if ($p->getFloorY() == $y) {
+			for ($x = $sx; $x <= $mx; $x++) {
+				for ($y = 0; $y <= 4; $y++) {
+					for ($z = $sz; $z <= $mz; $z++) {
+						$bl = $block->add($x, $y, $z);
+						$space[] = $bl->asVector3();
+					}
+				}
+			}
+			return $space;
+		}
+
+		$sy = $y - $p->getFloorY();
+		$sy = $sy * -1;
+
+        $i = 0;
         for ($x = $sx; $x <= $mx; $x++) {
-            for ($y = 1; $y >= -1; $y--) {
+            for ($y = $sy; $y <= 4; $y++) {
                 for ($z = $sz; $z <= $mz; $z++) {
+                	var_dump($y);
                     $bl = $block->add($x, $y, $z);
                     $space[] = $bl->asVector3();
+                    $i++;
                 }
             }
         }
+        var_dump($i);
         return $space;
     }
 
     public static function getMana()
     {
-        return 30;
+        return 70;
     }
 
     public static function getSkilpoint()
@@ -116,13 +126,13 @@ class Skil_7_5_7 extends Skil
 
     public static function getIcon()
     {
-        $item = Item::get(Item::IRON_ORE, 0, 1);
+        $item = Item::get(Item::DIAMOND_BLOCK, 0, 1);
 
         return $item;
     }
 
     public static function getCoolTime()
 	{
-		return 5;
+		return 30;
 	}
 }

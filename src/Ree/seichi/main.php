@@ -219,7 +219,7 @@ class main extends PluginBase implements listener
 					break;
 
 				case Gatya::APPLE2:
-					$mana = $pT->s_mana + 1200;
+					$mana = $pT->s_mana + 1000;
 					if ($mana > $pT->getMaxmana()) {
 						$pT->s_mana = $pT->getMaxmana();
 					} else {
@@ -307,11 +307,9 @@ class main extends PluginBase implements listener
 			return;
 		}
 
-		if ($pT->s_mana >= $pT->s_nowSkil::getMana()) {
-			$pT->s_mana = $pT->s_mana - $pT->s_nowSkil::getMana();
-			$pT->addCoin(0.1);
-		} else {
-			$p->sendTip("§cSkil発動に必要なマナが足りません");
+		if ($pT->s_coolTime !== 0)
+		{
+			$p->sendTip(ReefAPI::BAD.'スキルはクールタイム中です');
 			$pT->addxp($ev->getBlock()->asVector3());
 			foreach ($ev->getDrops() as $drop) {
 				StackStrage_API::add($p, $drop);
@@ -321,9 +319,11 @@ class main extends PluginBase implements listener
 			return;
 		}
 
-		if ($pT->s_coolTime)
-		{
-			$p->sendTip(ReefAPI::BAD.'スキルはクールタイム中です');
+		if ($pT->s_mana >= $pT->s_nowSkil::getMana()) {
+			$pT->s_mana = $pT->s_mana - $pT->s_nowSkil::getMana();
+			$pT->addCoin(0.1);
+		} else {
+			$p->sendTip(ReefAPI::BAD."スキル発動に必要なマナが足りません");
 			$pT->addxp($ev->getBlock()->asVector3());
 			foreach ($ev->getDrops() as $drop) {
 				StackStrage_API::add($p, $drop);

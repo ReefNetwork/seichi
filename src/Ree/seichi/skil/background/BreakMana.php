@@ -12,7 +12,7 @@ class BreakMana
     public static function onBreak(PlayerTask $pT)
     {
         $level = $pT->s_level;
-        if (mt_rand(1 ,10) <= 4)
+        if (mt_rand(1 ,10) < 5)
         {
             return;
         }

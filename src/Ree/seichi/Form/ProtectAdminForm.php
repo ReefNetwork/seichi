@@ -42,6 +42,9 @@ class ProtectAdminForm implements Form
 //					'text' => '土地にテレポートする'
 //				],
 				[
+					'text' => '土地保護を削除する'
+				],
+				[
 					'text' => "戻る"
 				],
 			]
@@ -54,14 +57,18 @@ class ProtectAdminForm implements Form
 			return;
 		}
 		switch ($data) {
-			/*case 0:
-				$p->sendMessage(ReefAPI::GOOD.'テレポートしています...');
-				$level = Server::getInstance()->getLevelByName($this->data["level"]);
-				var_dump(632);
-				$pos = new Position($data["x1"] ,100 ,$data["z1"] ,$level);
-				var_dump(1);
-				$p->teleport($pos);
-				break;*/
+			case 0:
+				$p->sendForm(new ProtectRemoveCheckForm($this->data));
+				break;
+
+//			case 1:
+//				$p->sendMessage(ReefAPI::GOOD.'テレポートしています...');
+//				$level = Server::getInstance()->getLevelByName($this->data["level"]);
+//				var_dump(632);
+//				$pos = new Position($data["x1"] ,100 ,$data["z1"] ,$level);
+//				var_dump(1);
+//				$p->teleport($pos);
+//				break;
 
 			default:
 				$p->sendForm(new WorldProtectForm($p));
