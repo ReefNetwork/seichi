@@ -123,6 +123,6 @@ class Skil_5_3_5 extends Skil
 
     public static function getCoolTime()
 	{
-		return 5;
+		return 14;
 	}
 }
