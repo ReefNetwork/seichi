@@ -98,14 +98,12 @@ class Skil_7_5_7 extends Skil
         for ($x = $sx; $x <= $mx; $x++) {
             for ($y = $sy; $y <= 4; $y++) {
                 for ($z = $sz; $z <= $mz; $z++) {
-                	var_dump($y);
                     $bl = $block->add($x, $y, $z);
                     $space[] = $bl->asVector3();
                     $i++;
                 }
             }
         }
-        var_dump($i);
         return $space;
     }
 

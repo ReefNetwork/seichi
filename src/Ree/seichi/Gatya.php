@@ -33,6 +33,10 @@ class Gatya
     public static function onGatya(Player $p): bool
     {
         $rand = mt_rand(1, 1500);
+        if ($rand <= 10)
+		{
+			$rand = mt_rand(1 ,100);
+		}
         if ($rand == 1)
         {
             $rand = mt_rand(1 ,5);
@@ -324,6 +328,7 @@ class Gatya
 
 			case $rand > 200 && $rand < 250:
 				$item = self::getGatya(self::APPLE2);
+				$item->setCount(mt_rand(1 ,6));
 				break;
 
             case self::APPLE1:
