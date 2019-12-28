@@ -133,4 +133,9 @@ class Skil_7_5_7 extends Skil
 	{
 		return 30;
 	}
+
+	public static function getNeedskil()
+	{
+		return Skil_5_3_5::getClassName();
+	}
 }

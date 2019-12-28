@@ -4,6 +4,7 @@ namespace Ree\seichi\form;
 
 use pocketmine\form\Form;
 use pocketmine\Player;
+use Ree\reef\ReefAPI;
 use Ree\seichi\main;
 use Ree\seichi\skil\Skil;
 
@@ -17,10 +18,14 @@ class SkilUnlockForm implements Form
 	 * @var Player
 	 */
 	private $p;
-
-	public function __construct(Player $p)
+	/**
+	 * @var string
+	 */
+	private $string;
+	public function __construct(Player $p ,string $string = "")
 	{
 		$this->p = $p;
+		$this->string = $string;
 	}
 
 	public function jsonSerialize()
@@ -49,7 +54,7 @@ class SkilUnlockForm implements Form
 		return [
 			'type' => 'form',
 			'title' => 'スキル解禁',
-			'content' => "所持スキルポイント : ".$pT->s_skilpoint,
+			'content' => $this->string."所持スキルポイント : ".$pT->s_skilpoint,
 			'buttons' => $buttons,
 		];
 	}
@@ -64,8 +69,18 @@ class SkilUnlockForm implements Form
 				$p->sendForm(new SkilSelectForm($p));
 				return;
 			}
-			$point = main::getpT($p->getName())->s_skilpoint;
-			$p->sendForm(new SkilUnlockCheckForm($this->list[$data], $point));
+			$pT = main::getpT($this->p->getName());
+			$skilname = $this->list[$data];
+			$skil = 'Ree\seichi\skil\\' . $skilname;
+			$need = $skil::getNeedSkil();
+			if (array_search($need ,$this->list))
+			{
+				$point = main::getpT($p->getName())->s_skilpoint;
+				$p->sendForm(new SkilUnlockCheckForm($skilname ,$point));
+			}else{
+				$p->sendForm(new SkilUnlockForm($p ,ReefAPI::BAD.'このスキルを開放するには'.$need.'を開放する必要があります'."\n"));
+			}
+
 		} else {
 			$pT = main::getpT($p->getName());
 			$p->sendForm(new MenuForm($pT));

@@ -99,30 +99,35 @@ class Skil_5_3_5 extends Skil
         return $space;
     }
 
-    public static function getMana()
+    public static function getMana(): int
     {
         return 30;
     }
 
-    public static function getSkilpoint()
+    public static function getSkilpoint(): int
     {
         return 50;
     }
 
-    public static function getSlot()
+    public static function getSlot(): int
     {
         return 31;
     }
 
-    public static function getIcon()
+    public static function getIcon(): Item
     {
         $item = Item::get(Item::IRON_ORE, 0, 1);
 
         return $item;
     }
 
-    public static function getCoolTime()
+    public static function getCoolTime(): int
 	{
 		return 14;
+	}
+
+	public static function getNeedSkil(): string
+	{
+		return 	Skil_3_3_3::getClassName();
 	}
 }

@@ -117,6 +117,6 @@ class Skil
 
     public static function getNeedskil()
     {
-
+    	return self::getClassName();
     }
 }
