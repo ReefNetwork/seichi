@@ -21,7 +21,7 @@ class Gatya
     const GATYA = "s_gatya";
     const APPLE1 = "99991";
     const APPLE2 = "99992";
-    const APPLE3 = "99993";
+    const MAXAPPLE = "99999";
     const XP = "99999";
 
     const ENCHANT_ADD_MANA = 100;
@@ -32,11 +32,7 @@ class Gatya
      */
     public static function onGatya(Player $p): bool
     {
-        $rand = mt_rand(1, 1500);
-        if ($rand <= 10)
-		{
-			$rand = mt_rand(1 ,100);
-		}
+        $rand = mt_rand(1, 2000);
         if ($rand == 1)
         {
             $rand = mt_rand(1 ,5);
@@ -89,7 +85,12 @@ class Gatya
                 $p->sendMessage("§e超大あたり");
                 break;
 
-            case $rand > 10 && $rand < 250:
+			case $rand > 250 && $rand < 260:
+				$p->sendMessage("§e大あたり");
+				break;
+
+            case $rand > 20 && $rand < 250:
+			case $rand > 260 && $rand < 0:
                 $p->sendMessage("§eあたり");
                 break;
 
@@ -314,7 +315,7 @@ class Gatya
                 break;
 
             case $rand > 170 && $rand < 200:
-                $item = Item::get(Item::IRON_PICKAXE ,211 ,1);
+                $item = Item::get(Item::IRON_PICKAXE ,0 ,1);
                 $item->setCustomName("§eLucky§ePickaxe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
@@ -329,6 +330,10 @@ class Gatya
 			case $rand > 200 && $rand < 250:
 				$item = self::getGatya(self::APPLE2);
 				$item->setCount(mt_rand(1 ,6));
+				break;
+
+			case $rand > 250 && $rand < 260:
+				$item = self::getGatya(self::MAXAPPLE);
 				break;
 
             case self::APPLE1:
@@ -347,6 +352,16 @@ class Gatya
 				$nbt = $item->getNamedTag();
 				$nbt->setInt(StackStrage_API::NOTSTACK, 0, 1);
 				$nbt->setInt(gatya::GATYA, self::APPLE2);
+				$nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
+				$item->setNamedTag($nbt);
+				break;
+
+			case self::MAXAPPLE:
+				$item = Item::get(Item::ENCHANTED_GOLDEN_APPLE, 0, 1);
+				$item->setCustomName("§eすーぱーガチャリンゴ\n食べると全回復するよ!!!");
+				$nbt = $item->getNamedTag();
+				$nbt->setInt(StackStrage_API::NOTSTACK, 0, 1);
+				$nbt->setInt(gatya::GATYA, self::MAXAPPLE);
 				$nbt->setString(StackStrage_API::PLAYERNAME, "NULL");
 				$item->setNamedTag($nbt);
 				break;
@@ -374,7 +389,7 @@ class Gatya
                         $item->setNamedTag($nbt);
                         break;
                     case 2:
-                        $count = mt_rand(1 ,8);
+                        $count = mt_rand(1 ,5);
                         $item = Item::get(Item::GOLDEN_APPLE, 0, $count);
                         $item->setCustomName("§eガチャリンゴ§r(§b小§r)\n食べると回復するよ!!!");
                         $nbt = $item->getNamedTag();

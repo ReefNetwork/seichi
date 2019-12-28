@@ -227,13 +227,8 @@ class main extends PluginBase implements listener
 					}
 					break;
 
-				case Gatya::APPLE3:
-					$mana = $pT->s_mana + 6200;
-					if ($mana > $pT->getMaxmana()) {
-						$pT->s_mana = $pT->getMaxmana();
-					} else {
-						$pT->s_mana = $mana;
-					}
+				case Gatya::MAXAPPLE:
+					$pT->s_mana = $pT->getMaxmana();
 					break;
 			}
 			$pT->sendBar();
