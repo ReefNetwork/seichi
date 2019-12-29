@@ -165,7 +165,7 @@ class main extends PluginBase implements listener
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_PICKAXE));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_AXE));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_SHOVEL));
-			$p->getInventory()->addItem(Item::get(Item::BAKED_POTATO, 0, 64));
+			$p->getInventory()->addItem(Item::get(Item::BAKED_POTATO, 0, 8));
 			$pT->sendLog("初期装備が付与されました");
 			$pT->sendLog("Setting::[HIDE]ServerLog");
 			$p->sendMessage("SeverLogをhideにしました");
