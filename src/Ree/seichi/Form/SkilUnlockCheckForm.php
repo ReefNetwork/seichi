@@ -25,7 +25,8 @@ class SkilUnlockCheckForm implements Form
 	public function jsonSerialize()
 	{
 		$skil = 'Ree\seichi\skil\\' . $this->skil;
-		$string = 'スキル: '.$skil::getName()."\n".'所持スキルポイント : '.$this->point."\n".'§1アンロックに必要なスキルポイント : '.$skil::getSkilPoint()."\n".'§9マナ消費量 : '.$skil::getMana()."\n".'§eクールタイム : '.$skil::getCoolTime();
+		$time = $skil::getCoolTime() / 20 .'秒';
+		$string = 'スキル: '.$skil::getName()."\n".'所持スキルポイント : '.$this->point."\n".'§1アンロックに必要なスキルポイント : '.$skil::getSkilPoint()."\n".'§9マナ消費量 : '.$skil::getMana()."\n".'§eクールタイム : '.$time;
 		return [
 			'type' => 'modal',
 			'title' => 'スキル解禁',

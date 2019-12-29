@@ -20,7 +20,8 @@ class SkilCheckForm implements \pocketmine\form\Form
 	public function jsonSerialize()
 	{
 		$skil = 'Ree\seichi\skil\\' . $this->skil;
-		$string = 'スキル: '.$skil::getName()."\n".'§9マナ消費量 : '.$skil::getMana()."\n".'§eクールタイム : '.$skil::getCoolTime();
+		$time = $skil::getCoolTime() / 20 .'秒';
+		$string = 'スキル: '.$skil::getName()."\n".'§9マナ消費量 : '.$skil::getMana()."\n".'§eクールタイム : '.$time;
 		return [
 			'type' => 'modal',
 			'title' => 'スキル選択',
