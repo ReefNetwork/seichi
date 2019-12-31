@@ -32,6 +32,7 @@ use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 
 use pocketmine\Server;
 use Ree\reef\ReefAPI;
+use Ree\seichi\form\SkilUnlockForm;
 use Ree\seichi\skil\background\BreakEffect;
 use Ree\seichi\skil\Skil;
 use Ree\seichi\Task\CoolTimeTask;
@@ -377,7 +378,7 @@ class PlayerTask
 		$this->s_experience++;
 		if ($this->s_experience % 1000 == 0) {
 			$this->s_gatya++;
-			$this->getPlayer()->sendTip("1000ブロック採掘したためガチャ券をゲットしました");
+			$this->getPlayer()->sendTip(ReefAPI::GOOD."1000ブロック採掘したためガチャ券をゲットしました");
 		}
 
 		$need = $this->getNeedxp();
@@ -385,6 +386,7 @@ class PlayerTask
 			$this->levelup();
 			$this->s_needxp = $this->getNeedxp();
 			$this->getPlayer()->sendMessage("levelupしてskilpointを手に入れました\nこれで最初のスキルをアンロックしてみましょう");
+			$this->getPlayer()->sendForm(new SkilUnlockForm($this->getPlayer() ,'levelupしてskilpointを手に入れました'."\n".'これで最初のスキルをアンロックしてみましょう'));
 		}
 		if ($need <= $this->s_experience) {
 			if ($this->s_level >= 100) {
