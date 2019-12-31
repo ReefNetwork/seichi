@@ -21,7 +21,7 @@ class Gatya
     const GATYA = "s_gatya";
     const APPLE1 = "99991";
     const APPLE2 = "99992";
-    const MAXAPPLE = "99999";
+    const MAXAPPLE = "99995";
     const XP = "99999";
 
     const ENCHANT_ADD_MANA = 100;
