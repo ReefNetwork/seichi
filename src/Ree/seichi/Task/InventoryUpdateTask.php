@@ -36,16 +36,7 @@ class InventoryUpdateTask extends Task
         }
 
         $this->pT->updateInventory();
+        $this->pT->sendBar();
         ReefAPI::UpdateSyogo($this->pT->getPlayer() ,main::getMain()->getSyogo()->get($p->getName()));
-        $level = $p->getLevel();
-        if ($level->getName() === "lobby") {
-            if (264 <= $p->getFloorX() and $p->getFloorX() <= 265)
-            {
-                if (255 <= $p->getFloorZ() and $p->getFloorZ() <= 256)
-                {
-                    $this->pT->s_chestInstance = new WorldSelect($this->pT ,false);
-                }
-            }
-        }
     }
 }
