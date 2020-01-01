@@ -42,13 +42,17 @@ class SyogoShopCheckForm implements Form
 		}
 		if ($data)
 		{
-			$pT = main::getpT($p->getName());
-			if ($pT->s_coin >= $this->money) {
-				$pT->s_coin= $pT->s_coin - $this->money;
-				ReefAPI::addSyogo($p ,$this->syogo);
-				$p->sendMessage(ReefAPI::GOOD.'称号を購入しました');
+			if (!ReefAPI::isHaveSyogo($p ,$data)) {
+				$pT = main::getpT($p->getName());
+				if ($pT->s_coin >= $this->money) {
+					$pT->s_coin= $pT->s_coin - $this->money;
+					ReefAPI::addSyogo($p ,$this->syogo);
+					$p->sendMessage(ReefAPI::GOOD.'称号を購入しました');
+				}else{
+					$p->sendMessage(ReefAPI::BAD.'お金が足りません');
+				}
 			}else{
-				$p->sendMessage(ReefAPI::BAD.'お金が足りません');
+				$p->sendMessage(ReefAPI::BAD.'その称号はすでに所得しています');
 			}
 		}else{
 			$p->sendMessage(ReefAPI::BAD.'購入をキャンセルしました');
