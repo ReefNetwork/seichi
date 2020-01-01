@@ -85,6 +85,9 @@ class MenuForm implements Form
 					'text' => "ボーナスコード"
 				],
 				[
+					'text' => "ショップ"
+				],
+				[
 					'text' => "同盟鯖"
 				],
 			]
@@ -182,6 +185,10 @@ class MenuForm implements Form
 				break;
 
 			case 14:
+				$p->sendForm(new ShopForm());
+				break;
+
+			case 15:
 				$p->sendForm(new TransferForm());
 				break;
 		}
