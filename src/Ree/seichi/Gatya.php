@@ -273,7 +273,7 @@ class Gatya
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 5));
-                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 1));
+                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 2));
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SILK_TOUCH), 1));
                 break;
 
@@ -286,7 +286,7 @@ class Gatya
                 $nbt->setString(StackStrage_API::PLAYERNAME, $n);
                 $item->setNamedTag($nbt);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 5));
-                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 1));
+                $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 2));
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SILK_TOUCH), 1));
                 break;
 
@@ -315,7 +315,7 @@ class Gatya
                 break;
 
             case $rand > 170 && $rand < 200:
-                $item = Item::get(Item::IRON_PICKAXE ,0 ,1);
+                $item = Item::get(Item::IRON_PICKAXE ,245 ,1);
                 $item->setCustomName("§eLucky§ePickaxe\n\n§2所有者 : " . $n);
                 $nbt = $item->getNamedTag();
                 $nbt->setInt(StackStrage_API::NOTSTACK, 1);
