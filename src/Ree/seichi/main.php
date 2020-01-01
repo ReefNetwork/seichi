@@ -141,7 +141,7 @@ class main extends PluginBase implements listener
 		}
 
 		foreach (Server::getInstance()->getOnlinePlayers() as $p) {
-			$p->kick("§a✔ Saving player data and exiting server...", false);
+			$p->kick(ReefAPI::ERROR."サーバーが停止しました", false);
 			sleep(1);
 		}
 		echo "seichi >> Complete\n";
@@ -254,7 +254,7 @@ class main extends PluginBase implements listener
 			return;
 		}
 		if (!$this->checkHigth($ev->getBlock()->asPosition(), $ev->getBlock()->getLevel())) {
-			$p->sendTip("§c上から掘ってください");
+			$p->sendTip(ReefAPI::BAD."上から掘ってください");
 			$ev->setCancelled();
 			return;
 		}
