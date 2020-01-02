@@ -4,13 +4,10 @@
 namespace Ree\seichi\form;
 
 
-use pocketmine\entity\Effect;
-use pocketmine\entity\EffectInstance;
 use pocketmine\form\Form;
 use pocketmine\Player;
 use Ree\reef\ReefAPI;
 use Ree\seichi\main;
-use Ree\seichi\PlayerTask;
 
 class ShopForm implements Form
 {
@@ -25,7 +22,7 @@ class ShopForm implements Form
 					'text' => "ブロック"
 				],
 				[
-					'text' => "ツール"
+					'text' => "アイテム"
 				],
 				[
 					'text' => "エフェクト"
@@ -44,8 +41,11 @@ class ShopForm implements Form
 		}
 		switch ($data) {
 			case 0:
+				$player->sendForm(new BlockShopForm());
+				break;
+
 			case 1:
-				$player->sendMessage(ReefAPI::BAD.'未実装です');
+				$player->sendForm(new ItemShopForm());
 				break;
 
 			case 2:

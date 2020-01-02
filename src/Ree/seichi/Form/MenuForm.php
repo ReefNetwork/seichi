@@ -3,9 +3,11 @@
 namespace Ree\seichi\form;
 
 use pocketmine\form\Form;
+use pocketmine\Player;
 use Ree\doumei\TransferForm;
 use Ree\reef\form\BonusCode;
 use Ree\reef\form\SyogoForm;
+use Ree\reef\ReefAPI;
 use Ree\seichi\Gatya;
 use Ree\seichi\PlayerTask;
 use Ree\StackStrage\Virchal\Dust;
@@ -52,7 +54,7 @@ class MenuForm implements Form
 					'text' => "ガチャストレージ"
 				],
 				[
-					'text' => "フライを" . $fly . "にする"
+					'text' => "フライを" . $fly . "にする\n§r1分3coinです"
 				],
 				[
 					'text' => "スキルを選択する"
@@ -94,7 +96,7 @@ class MenuForm implements Form
 		];
 	}
 
-	public function handleResponse(\pocketmine\Player $p, $data): void
+	public function handleResponse(Player $p, $data): void
 	{
 		$pT = $this->pT;
 		if ($data === NULL) {
@@ -114,15 +116,15 @@ class MenuForm implements Form
 
 			case 3:
 				if (!$pT->s_fly) {
-					if ($pT->s_coin > 1) {
-						$p->sendMessage("§aフライが有効になりました");
+					if ($pT->s_coin >= 3) {
+						$p->sendMessage(ReefAPI::GOOD."フライが有効になりました");
 						$pT->s_fly = true;
 						$p->setAllowFlight(true);
 					} else {
-						$p->sendForm(new MenuForm($pT, "§cお金が足りません"));
+						$p->sendForm(new MenuForm($pT, ReefAPI::BAD."お金が足りません"));
 					}
 				} else {
-					$p->sendMessage("§7フライを無効にしました");
+					$p->sendMessage(ReefAPI::GOOD."フライを無効にしました");
 					$pT->s_fly = false;
 					$p->setAllowFlight(false);
 					$p->setFlying(false);
