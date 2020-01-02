@@ -389,9 +389,9 @@ class PlayerTask
 			$this->getPlayer()->sendForm(new SkilUnlockForm($this->getPlayer() ,'levelupしてskilpointを手に入れました'."\n".'これで最初のスキルをアンロックしてみましょう'));
 		}
 		if ($need <= $this->s_experience) {
-			if ($this->s_level >= 100) {
+			if ($this->s_level >= 200) {
 				return;
-			}
+		}
 			$this->levelup();
 			$this->s_needxp = $this->getNeedxp();
 		}
