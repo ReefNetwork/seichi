@@ -64,7 +64,7 @@ class ItemShopForm implements Form
 				break;
 
 			case 1:
-				$item = Item::get(Item::IRON_PICKAXE);
+				$item = Item::get(Item::IRON_SHOVEL);
 				$item->setCustomName("スタンダードしゃべる");
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 3));
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 15));
