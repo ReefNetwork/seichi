@@ -192,11 +192,7 @@ class main extends PluginBase implements listener
 				$this->getScheduler()->cancelTask($id);
 			}
 		}
-
-		$this->strage->set($n, $pT->s_strage);
-		$this->data->set($n, $pT->getData());
-		$this->strage->save();
-		$this->data->save();
+		$this->Save($pT);
 	}
 
 	public function onEat(PlayerItemConsumeEvent $ev)
@@ -594,5 +590,15 @@ class main extends PluginBase implements listener
 	static public function getData()
 	{
 		return self::getMain()->data;
+	}
+
+	public function Save(PlayerTask $pT): void
+	{
+		$n = $pT->getPlayer()->getName();
+
+		$this->strage->set($n, $pT->s_strage);
+		$this->data->set($n, $pT->getData());
+		$this->strage->save();
+		$this->data->save();
 	}
 }
