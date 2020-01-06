@@ -38,9 +38,9 @@ class ProtectAdminForm implements Form
 			'title' => '土地保護管理',
 			'content' => $string,
 			'buttons' => [
-//				[
-//					'text' => '土地にテレポートする'
-//				],
+				[
+					'text' => '土地にテレポートする'
+				],
 				[
 					'text' => '土地保護を削除する'
 				],
@@ -58,17 +58,15 @@ class ProtectAdminForm implements Form
 		}
 		switch ($data) {
 			case 0:
-				$p->sendForm(new ProtectRemoveCheckForm($this->data));
+				$p->sendMessage(ReefAPI::GOOD.'テレポートしています...');
+				$level = Server::getInstance()->getLevelByName($this->data["level"]);
+				$pos = new Position($this->data["x1"] + 0.5 ,100 ,$this->data["z1"] + 0.5 ,$level);
+				$p->teleport($pos);
 				break;
 
-//			case 1:
-//				$p->sendMessage(ReefAPI::GOOD.'テレポートしています...');
-//				$level = Server::getInstance()->getLevelByName($this->data["level"]);
-//				var_dump(632);
-//				$pos = new Position($data["x1"] ,100 ,$data["z1"] ,$level);
-//				var_dump(1);
-//				$p->teleport($pos);
-//				break;
+			case 1:
+				$p->sendForm(new ProtectRemoveCheckForm($this->data));
+				break;
 
 			default:
 				$p->sendForm(new WorldProtectForm($p));
