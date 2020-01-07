@@ -5,6 +5,7 @@ namespace Ree\seichi\form;
 use pocketmine\form\Form;
 use pocketmine\Player;
 use Ree\doumei\TransferForm;
+use Ree\plugin\mywarp\MyWarpForm;
 use Ree\reef\form\BonusCode;
 use Ree\reef\form\SyogoForm;
 use Ree\reef\ReefAPI;
@@ -88,6 +89,9 @@ class MenuForm implements Form
 				],
 				[
 					'text' => "ショップ"
+				],
+				[
+					'text' => "ワープ"
 				],
 				[
 					'text' => "同盟鯖"
@@ -191,6 +195,10 @@ class MenuForm implements Form
 				break;
 
 			case 15:
+				$p->sendForm(new MyWarpForm($p));
+				break;
+
+			case 16:
 				$p->sendForm(new TransferForm());
 				break;
 		}
