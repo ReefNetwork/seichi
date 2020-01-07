@@ -32,7 +32,7 @@ class Gatya
      */
     public static function onGatya(Player $p): bool
     {
-        $rand = mt_rand(1, 10000);
+        $rand = mt_rand(1, 5000);
         if ($rand == 1)
         {
             $rand = mt_rand(1 ,5);
@@ -50,7 +50,7 @@ class Gatya
                 Server::getInstance()->broadcastMessage("§b" . $p->getName() . "§rさんが§aReef§eTool§rを引きました");
                 $webhook = ReefAPI::getWebhook(1);
                 $content = new Content();
-                $content->setText("§b" . $p->getName() . "§rさんが§aReef§eTool§rを引きました");
+                $content->setText($p->getName() . "さんがReefToolを引きました");
                 $webhook->add($content);
                 $embeds = new Embeds();
                 $webhook->add($embeds);
@@ -63,7 +63,7 @@ class Gatya
                 Server::getInstance()->broadcastMessage("§b" . $p->getName() . "§rさんが§aReef§eTool§rを引きましたwww");
 				$webhook = ReefAPI::getWebhook(1);
                 $content = new Content();
-                $content->setText("§b" . $p->getName() . "§rさんが§aReef§eTool§rを引きましたwww");
+                $content->setText($p->getName() . "さんがReefToolを引きましたwww");
                 $webhook->add($content);
                 $embeds = new Embeds();
                 $webhook->add($embeds);
@@ -73,10 +73,10 @@ class Gatya
                 break;
 
             case $rand > 5 && $rand < 10:
-                Server::getInstance()->broadcastMessage("§b" . $p->getName() . "§rさんが§aReef§eArmor§rを引きました");
+				Server::getInstance()->broadcastMessage("§b" . $p->getName() . "§rさんが§aReef§eArmor§rを引きました");
 				$webhook = ReefAPI::getWebhook(1);
                 $content = new Content();
-                $content->setText("§b" . $p->getName() . "§rさんが§aReef§eArmor§rを引きました");
+                $content->setText($p->getName() . "さんがReefArmorを引きました");
                 $webhook->add($content);
                 $embeds = new Embeds();
                 $webhook->add($embeds);

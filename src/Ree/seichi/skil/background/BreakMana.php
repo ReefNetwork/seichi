@@ -20,7 +20,7 @@ class BreakMana
         {
             $mana = $level + 3;
         }else{
-            $mana = ($level % 2);
+            $mana = ceil(24 / 5);
             $mana += 10;
         }
 
