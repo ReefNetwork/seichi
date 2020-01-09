@@ -75,7 +75,7 @@ class ItemShopForm implements Form
 				$item = Item::get(Item::DIAMOND_PICKAXE);
 				$item->setCustomName("すごいつるはし");
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 2));
-				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 3));
+				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 7));
 				$player->sendForm(new BuyForm($item ,100));
 				break;
 
@@ -83,7 +83,7 @@ class ItemShopForm implements Form
 				$item = Item::get(Item::DIAMOND_SHOVEL);
 				$item->setCustomName("すごいしゃべる");
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 2));
-				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 3));
+				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 7));
 				$player->sendForm(new BuyForm($item ,100));
 				break;
 
