@@ -27,7 +27,7 @@ class ProtectRemoveCheckForm implements Form
 		return [
 			'type' => 'modal',
 			'title' => '土地保護管理',
-			'content' => '土地を本当に削除しますか?\n§c取り消し出来ません',
+			'content' => '土地を本当に削除しますか?'."\n".'§c取り消し出来ません',
 			'button1' => '削除する',
 			'button2' => '戻る',
 		];

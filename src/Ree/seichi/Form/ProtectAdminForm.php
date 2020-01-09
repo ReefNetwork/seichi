@@ -42,7 +42,13 @@ class ProtectAdminForm implements Form
 					'text' => '土地にテレポートする'
 				],
 				[
-					'text' => '土地保護を削除する'
+					'text' => '土地を共有する'
+				],
+				[
+					'text' => '共有を解除する'
+				],
+				[
+					'text' => '土地保護を解除する'
 				],
 				[
 					'text' => "戻る"
@@ -65,6 +71,14 @@ class ProtectAdminForm implements Form
 				break;
 
 			case 1:
+				$p->sendForm(new ProtectShareForm($this->data["id"]));
+				break;
+
+			case 2:
+				$p->sendForm(new ProtectShareRemoveForm($this->data["id"]));
+				break;
+
+			case 3:
 				$p->sendForm(new ProtectRemoveCheckForm($this->data));
 				break;
 
