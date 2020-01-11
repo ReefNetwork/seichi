@@ -405,9 +405,11 @@ class PlayerTask
 		$old = $this->s_level;
 		$this->s_level++;
 		$this->getPlayer()->addTitle("§eLevelUP §d" . $old . " -> §c" . $this->s_level, "§3Skilpoint§2を5手に入れました");
+		Server::getInstance()->broadcastMessage($this->getPlayer()->getName().'さんのレベルが'.$this->s_level.'になりました');
 		$this->s_skilpoint = $this->s_skilpoint + 5;
 		$this->getPlayer()->setHealth($this->getPlayer()->getMaxHealth());
 		$this->getPlayer()->setFood($this->getPlayer()->getMaxFood());
+		$this->s_mana = $this->getMaxmana();
 	}
 
 	/**
