@@ -25,9 +25,9 @@ class FlyTask extends Task
         $bool = $this->pT->s_fly;
         if ($bool)
         {
-            if ($this->pT->s_coin > 1)
+            if ($this->pT->s_coin > 3)
             {
-                $this->pT->s_coin = $this->pT->s_coin - 1;
+                $this->pT->s_coin = $this->pT->s_coin - 3;
                 $this->pT->getPlayer()->sendMessage("§aフライは有効です");
             }else{
                 $this->pT->s_fly = false;
