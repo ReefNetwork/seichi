@@ -21,7 +21,7 @@ class BlockShopForm implements Form
 					'text' => "ネザー系"
 				],
 				[
-					'text' => "海底神殿系"
+					'text' => "海系"
 				],
 				[
 					'text' => "戻る"
