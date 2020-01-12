@@ -34,6 +34,12 @@ class ItemShopForm implements Form
 					'text' => "すごいしゃべる"
 				],
 				[
+					'text' => "かたいつるはし"
+				],
+				[
+					'text' => "かた...ぁ\\い しゃべる"
+				],
+				[
 					'text' => "ステーキ"
 				],
 				[
@@ -41,6 +47,9 @@ class ItemShopForm implements Form
 				],
 				[
 					'text' => "ガチャリンゴ(大)"
+				],
+				[
+					'text' => "はなび"
 				],
 				[
 					'text' => "戻る"
@@ -74,7 +83,7 @@ class ItemShopForm implements Form
 			case 2:
 				$item = Item::get(Item::DIAMOND_PICKAXE);
 				$item->setCustomName("すごいつるはし");
-				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 2));
+				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 3));
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 7));
 				$player->sendForm(new BuyForm($item ,100));
 				break;
@@ -82,24 +91,42 @@ class ItemShopForm implements Form
 			case 3:
 				$item = Item::get(Item::DIAMOND_SHOVEL);
 				$item->setCustomName("すごいしゃべる");
-				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 2));
+				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 3));
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 7));
 				$player->sendForm(new BuyForm($item ,100));
 				break;
 
 			case 4:
-				$player->sendForm(new BuyForm(Item::get(Item::STEAK) ,10));
+				$item = Item::get(Item::DIAMOND_PICKAXE);
+				$item->setCustomName("かたいつるはし");
+				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 40));
+				$player->sendForm(new BuyForm($item ,500));
 				break;
 
 			case 5:
-				$player->sendForm(new BuyForm(Gatya::getGatya(Gatya::APPLE1) ,5));
+				$item = Item::get(Item::DIAMOND_SHOVEL);
+				$item->setCustomName("かたいしゃべる");
+				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 40));
+				$player->sendForm(new BuyForm($item ,500));
 				break;
 
 			case 6:
-				$player->sendForm(new BuyForm(Gatya::getGatya(Gatya::APPLE2) ,30));
+				$player->sendForm(new BuyForm(Item::get(Item::STEAK) ,10));
 				break;
 
 			case 7:
+				$player->sendForm(new BuyForm(Gatya::getGatya(Gatya::APPLE1) ,5));
+				break;
+
+			case 8:
+				$player->sendForm(new BuyForm(Gatya::getGatya(Gatya::APPLE2) ,30));
+				break;
+
+			case 9:
+				$player->sendForm(new BuyForm(Item::get(Item::FIREWORKS) ,10));
+				break;
+
+			case 10:
 				$player->sendForm(new ShopForm());
 				break;
 
