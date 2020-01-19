@@ -64,6 +64,11 @@ class BuyForm implements Form
 				$player->sendMessage(ReefAPI::BAD . '数値を入力してください');
 				return;
 			}
+			if ($data[0] <= 0)
+			{
+				$player->sendMessage(ReefAPI::BAD . '数値を入力してください');
+				return;
+			}
 			$pT = main::getpT($player->getName());
 			$coin = $this->price * $data[0];
 			$item = $this->item;
