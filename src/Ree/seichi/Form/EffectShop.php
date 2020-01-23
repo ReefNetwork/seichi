@@ -29,6 +29,7 @@ class EffectShop implements Form
 						'跳躍力上昇(Lv5) 10coin/分',
 						'採掘速度上昇(Lv2) 10coin/分',
 						'スピード上昇(Lv2) 10coin/分',
+						'水中呼吸(Lv1) 10coin/分',
 					],
 				],
 				[
@@ -48,6 +49,11 @@ class EffectShop implements Form
 		}
 		if (isset ($data[1])) {
 			if (!is_numeric($data[1])) {
+				$player->sendMessage(ReefAPI::BAD . '数値を入力してください');
+				return;
+			}
+			if ($data[0] <= 0)
+			{
 				$player->sendMessage(ReefAPI::BAD . '数値を入力してください');
 				return;
 			}
@@ -92,6 +98,15 @@ class EffectShop implements Form
 				case 4:
 					if ($this->removeCoin($pT, 10 * $data[1])) {
 						$player->addEffect(new EffectInstance(Effect::getEffect(Effect::SPEED), $data[1] * 1200, 1));
+						$player->sendMessage(ReefAPI::GOOD.'購入しました');
+					} else {
+						$player->sendMessage(ReefAPI::BAD . 'お金が足りません');
+					}
+					break;
+
+				case 5:
+					if ($this->removeCoin($pT, 10 * $data[1])) {
+						$player->addEffect(new EffectInstance(Effect::getEffect(Effect::WATER_BREATHING), $data[1] * 1200, 1));
 						$player->sendMessage(ReefAPI::GOOD.'購入しました');
 					} else {
 						$player->sendMessage(ReefAPI::BAD . 'お金が足りません');
