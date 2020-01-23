@@ -41,7 +41,7 @@ class BlockShopForm implements Form
 				break;
 
 			case 1:
-				$player->sendMessage(ReefAPI::BAD.'未実装です');
+				$player->sendMessage(new OceanBlockForm());
 				break;
 
 			case 2:

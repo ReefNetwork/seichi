@@ -5,6 +5,7 @@ namespace Ree\seichi\form;
 use pocketmine\form\Form;
 use pocketmine\Player;
 use Ree\doumei\TransferForm;
+use Ree\plugin\cape\CapeSelectForm;
 use Ree\plugin\mywarp\MyWarpForm;
 use Ree\reef\form\BonusCode;
 use Ree\reef\form\SyogoForm;
@@ -92,6 +93,9 @@ class MenuForm implements Form
 				],
 				[
 					'text' => "ワープ"
+				],
+				[
+					'text' => "ケープを設定する(β)"
 				],
 				[
 					'text' => "同盟鯖"
@@ -199,6 +203,15 @@ class MenuForm implements Form
 				break;
 
 			case 16:
+				if (ReefAPI::isVip($p->getName()))
+				{
+					$p->sendForm(new CapeSelectForm());
+				}else{
+					$p->sendMessage(ReefAPI::BAD.'この機能は現段階ではvipユーザーのみ使用できます');
+				}
+				break;
+
+			case 17:
 				$p->sendForm(new TransferForm());
 				break;
 		}
