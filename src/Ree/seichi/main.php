@@ -595,23 +595,24 @@ class main extends PluginBase implements listener
 		$pT = self::getpT($p->getName());
 		$skil = $pT->s_nowSkil;
 		$block = $p->getLevel()->getBlock($p->asVector3());
-		if (ReefAPI::isProtect($block->asPosition() ,$p))
+		if (!ReefAPI::isProtect($block->asPosition() ,$p))
 		{
 			$p->addActionBarMessage(ReefAPI::BAD . "その場所のブロック変更することは出来ません");
+			return;
 		}
 
 		if ($skil::isWalkSkil())
 		{
-			if ($skil::getCoolTime())
-			{
-				$pT->s_coolTime = $pT->s_nowSkil::getCoolTime();
-				main::getMain()->getScheduler()->scheduleDelayedTask(new CoolTimeTask($pT) ,$skil::getCoolTime());
+			if ($pT->s_coolTime !== 0) {
+				$p->sendTip(ReefAPI::BAD . 'スキルはクールタイム中です');
+				return;
 			}
 			$space = $skil::getSpace($block ,$p->getFloorX(), $p->getFloorY(), $p->getFloorZ(), $p);
 			$blockcount = count($space);
 			$mana = round ($skil::getMana() / $blockcount ,2);
 			$target = $skil::getTarget();
 			$pT->s_running = true;
+			$use = false;
 			foreach ($space as $vec3) {
 				$bl = $p->getLevel()->getBlock($vec3);
 				if ($bl->getId() === $target->getId()) {
@@ -624,6 +625,7 @@ class main extends PluginBase implements listener
 							$p->getLevel()->setBlock($vec3 ,$skil::getChangeBlock());
 							$pT->addxp();
 							$pT->addCoin(0.01);
+							$use = true;
 						}else{
 							$p->addActionBarMessage(ReefAPI::BAD . "その場所のブロック変更することは出来ません");
 						}
@@ -632,6 +634,11 @@ class main extends PluginBase implements listener
 					}
 
 				}
+			}
+			if ($skil::getCoolTime() and $use)
+			{
+				$pT->s_coolTime = $pT->s_nowSkil::getCoolTime();
+				main::getMain()->getScheduler()->scheduleDelayedTask(new CoolTimeTask($pT) ,$skil::getCoolTime());
 			}
 			$pT->s_running = false;
 		}

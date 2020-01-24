@@ -89,7 +89,7 @@ class Ice_7_7_7 extends Skil
 	 */
     public static function getCoolTime()
 	{
-		return 0;
+		return 10;
 	}
 
     public static function getNeedskil()
