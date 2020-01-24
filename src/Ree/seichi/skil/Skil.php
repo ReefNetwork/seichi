@@ -21,6 +21,7 @@ class Skil
         "Skil_5_3_5",
 		"Skil_7_5_7",
 		"Skil_9_7_9",
+		"Ice_7_7_7",
     ];
 
     /**
@@ -59,15 +60,15 @@ class Skil
         return "Skil";
     }
 
-    /**
-     * @param Block $block
-     * @param int $x
-     * @param int $y
-     * @param int $z
-     * @param Player $p
-     * @return array
-     */
-    public static function getSpace(Block $block ,int $x ,int $y ,int $z ,Player $p)
+	/**
+	 * @param Block $block
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @param Player $p
+	 * @return Vector3[]
+	 */
+    public static function getSpace(Block $block,int $x ,int $y ,int $z ,Player $p)
     {
         $space[]= $block->asVector3();
         return $space;
@@ -118,6 +119,27 @@ class Skil
 
     public static function getNeedskil()
     {
-    	return self::getClassName();
+    	return Skil::getClassName();
     }
+
+    public static function isWalkSkil(): bool
+	{
+		return false;
+	}
+
+	/**
+	 * @return null|Block
+	 */
+	public static function getTarget()
+	{
+		return null;
+	}
+
+	/**
+	 * @return Block
+	 */
+	public static function getChangeBlock(): Block
+	{
+		return Block::get(Block::AIR);
+	}
 }

@@ -20,6 +20,7 @@ namespace Ree\seichi;
 use pocketmine\block\Block;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\level\generator\GeneratorManager;
 use pocketmine\level\Level;
@@ -41,6 +42,7 @@ use Ree\seichi\event\ChristmasGatya2019;
 use Ree\seichi\form\MenuForm;
 use Ree\seichi\skil\background\BreakMana;
 use Ree\seichi\skil\background\Fortune;
+use Ree\seichi\Task\CoolTimeTask;
 use Ree\seichi\Task\FlyTask;
 use Ree\seichi\Task\InventoryUpdateTask;
 use Ree\seichi\Task\ScoreBoardTask;
@@ -71,7 +73,7 @@ class main extends PluginBase implements listener
 	 * @var Config
 	 */
 	private $data;
-	
+
 	/**
 	 * @var int[]
 	 */
@@ -141,7 +143,7 @@ class main extends PluginBase implements listener
 		}
 
 		foreach (Server::getInstance()->getOnlinePlayers() as $p) {
-			$p->kick(ReefAPI::ERROR."サーバーが停止しました", false);
+			$p->kick(ReefAPI::ERROR . "サーバーが停止しました", false);
 			sleep(1);
 		}
 		echo "seichi >> Complete\n";
@@ -246,18 +248,18 @@ class main extends PluginBase implements listener
 		if ($ev->isCancelled()) {
 			return;
 		}
-		if (!ReefAPI::isProtect($block->asPosition() ,$p)) {
+		if (!ReefAPI::isProtect($block->asPosition(), $p)) {
 			return;
 		}
 		if (!$this->checkHigth($ev->getBlock()->asPosition(), $ev->getBlock()->getLevel())) {
-			$p->sendTip(ReefAPI::BAD."上から掘ってください");
+			$p->sendTip(ReefAPI::BAD . "上から掘ってください");
 			$ev->setCancelled();
 			return;
 		}
 		if ($block->getId() === Block::STONE_SLAB) {
 			if ($block->getFloorY() === 1) {
 				$ev->setCancelled();
-				$p->addActionBarMessage(ReefAPI::BAD."y座標が1ブロックのハーフブロックは破壊することが出来ません");
+				$p->addActionBarMessage(ReefAPI::BAD . "y座標が1ブロックのハーフブロックは破壊することが出来ません");
 				return;
 			}
 		}
@@ -298,9 +300,19 @@ class main extends PluginBase implements listener
 			return;
 		}
 
-		if ($pT->s_coolTime !== 0)
+		if ($pT->s_nowSkil::isWalkSkil())
 		{
-			$p->sendTip(ReefAPI::BAD.'スキルはクールタイム中です');
+			$pT->addxp($ev->getBlock()->asVector3());
+			foreach ($ev->getDrops() as $drop) {
+				StackStrage_API::add($p, $drop);
+			}
+			$ev->setDrops([]);
+			$pT->addCoin(0.1);
+			return;
+		}
+
+		if ($pT->s_coolTime !== 0) {
+			$p->sendTip(ReefAPI::BAD . 'スキルはクールタイム中です');
 			$pT->addxp($ev->getBlock()->asVector3());
 			foreach ($ev->getDrops() as $drop) {
 				StackStrage_API::add($p, $drop);
@@ -314,7 +326,7 @@ class main extends PluginBase implements listener
 			$pT->s_mana = $pT->s_mana - $pT->s_nowSkil::getMana();
 			$pT->addCoin(0.1);
 		} else {
-			$p->sendTip(ReefAPI::BAD."スキル発動に必要なマナが足りません");
+			$p->sendTip(ReefAPI::BAD . "スキル発動に必要なマナが足りません");
 			$pT->addxp($ev->getBlock()->asVector3());
 			foreach ($ev->getDrops() as $drop) {
 				StackStrage_API::add($p, $drop);
@@ -377,33 +389,57 @@ class main extends PluginBase implements listener
 						$p->sendTip("§cインベントリがいっぱいです");
 						return;
 					}
-					if ($tag->offsetExists(ChristmasGatya2019::CHRISTMAS))
-					{
+					if ($tag->offsetExists(ChristmasGatya2019::CHRISTMAS)) {
 						$bool = ChristmasGatya2019::onGatya($p);
 						if ($bool) {
 							$item->setCount(1);
 							$p->getInventory()->removeItem($item);
-							$p->sendTip(ReefAPI::GOOD."ガチャを引きました");
+							$p->sendTip(ReefAPI::GOOD . "ガチャを引きました");
 						} else {
-							$p->sendTip(ReefAPI::BAD."§cインベントリがいっぱいです");
+							$p->sendTip(ReefAPI::BAD . "§cインベントリがいっぱいです");
 						}
 						return;
 					}
-					$bool = Gatya::onGatya($p);
-					if ($bool) {
-						$item->setCount(1);
-						$p->getInventory()->removeItem($item);
-						$p->sendTip(ReefAPI::GOOD."ガチャを引きました");
-					} else {
-						$p->sendTip(ReefAPI::BAD."インベントリがいっぱいです");
+					if ($p->isSneaking())
+					{
+						$count = $item->getCount();
+						$gatya = 0;
+						if ($count > 64)
+						{
+							$count = 64;
+						}
+						for (;$count >= 1 ;$count--)
+						{
+							$bool = Gatya::onGatya($p);
+							if ($bool) {
+								$item->setCount(1);
+								$p->getInventory()->removeItem($item);
+								$gatya++;
+							} else {
+								$p->sendTip(ReefAPI::BAD . "インベントリがいっぱいです");
+								$p->sendMessage(ReefAPI::GOOD.$gatya.'回ガチャを引きました');
+								break;
+							}
+							$p->sendMessage(ReefAPI::GOOD.$gatya.'回ガチャを引きました');
+							break;
+						}
+					}else{
+						$bool = Gatya::onGatya($p);
+						if ($bool) {
+							$item->setCount(1);
+							$p->getInventory()->removeItem($item);
+						} else {
+							$p->sendTip(ReefAPI::BAD . "インベントリがいっぱいです");
+						}
 					}
+
 				}
 				break;
 
 			case Item::STICK:
-				if(!isset($this->clickTime[$p->getName()])) $this->clickTime[$p->getName()] = 0;
-				if($this->clickTime[$p->getName()] === time()) return;
-			    
+				if (!isset($this->clickTime[$p->getName()])) $this->clickTime[$p->getName()] = 0;
+				if ($this->clickTime[$p->getName()] === time()) return;
+
 				$p->sendForm(new MenuForm($pT));
 				$this->clickTime[$p->getName()] = time();
 				break;
@@ -553,6 +589,54 @@ class main extends PluginBase implements listener
 		return false;
 	}
 
+	public function onMove(PlayerMoveEvent $ev)
+	{
+		$p = $ev->getPlayer();
+		$pT = self::getpT($p->getName());
+		$skil = $pT->s_nowSkil;
+		$block = $p->getLevel()->getBlock($p->asVector3());
+		if (ReefAPI::isProtect($block->asPosition() ,$p))
+		{
+			$p->addActionBarMessage(ReefAPI::BAD . "その場所のブロック変更することは出来ません");
+		}
+
+		if ($skil::isWalkSkil())
+		{
+			if ($skil::getCoolTime())
+			{
+				$pT->s_coolTime = $pT->s_nowSkil::getCoolTime();
+				main::getMain()->getScheduler()->scheduleDelayedTask(new CoolTimeTask($pT) ,$skil::getCoolTime());
+			}
+			$space = $skil::getSpace($block ,$p->getFloorX(), $p->getFloorY(), $p->getFloorZ(), $p);
+			$blockcount = count($space);
+			$mana = round ($skil::getMana() / $blockcount ,2);
+			$target = $skil::getTarget();
+			$pT->s_running = true;
+			foreach ($space as $vec3) {
+				$bl = $p->getLevel()->getBlock($vec3);
+				if ($bl->getId() === $target->getId()) {
+					if ($pT->s_mana >= $mana)
+					{
+						$pos = new Position($vec3->getFloorX() ,$vec3->getFloorY() ,$vec3->getFloorZ() ,$p->getLevel());
+						if (ReefAPI::isProtect($pos ,$p))
+						{
+							$pT->s_mana = $pT->s_mana - $mana;
+							$p->getLevel()->setBlock($vec3 ,$skil::getChangeBlock());
+							$pT->addxp();
+							$pT->addCoin(0.01);
+						}else{
+							$p->addActionBarMessage(ReefAPI::BAD . "その場所のブロック変更することは出来ません");
+						}
+					}else{
+						$p->sendTip(ReefAPI::BAD.'マナが足りません');
+					}
+
+				}
+			}
+			$pT->s_running = false;
+		}
+	}
+
 	public function onReceive(DataPacketReceiveEvent $ev)
 	{
 		$p = $ev->getPlayer();
@@ -574,6 +658,7 @@ class main extends PluginBase implements listener
 	{
 		$main = self::$main;
 		return $main->pT[$n];
+
 	}
 
 	/**
