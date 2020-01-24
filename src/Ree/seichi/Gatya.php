@@ -102,7 +102,7 @@ class Gatya
 				break;
 
 			default:
-				$p->sendMessage("§8はずれ");
+				$p->sendTip("§8はずれ");
 		}
 		$p->getInventory()->addItem($item);
 
