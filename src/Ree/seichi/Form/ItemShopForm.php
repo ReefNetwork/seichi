@@ -119,7 +119,7 @@ class ItemShopForm implements Form
 				break;
 
 			case 8:
-				$player->sendForm(new BuyForm(Gatya::getGatya(Gatya::APPLE2) ,80));
+				$player->sendForm(new BuyForm(Gatya::getGatya(Gatya::APPLE2) ,50));
 				break;
 
 			case 9:
