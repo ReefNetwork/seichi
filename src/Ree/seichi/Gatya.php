@@ -35,11 +35,11 @@ class Gatya
 		$level = main::getpT($p->getName())->s_level;
 		switch (true) {
 			case $level < 10:
-				$rand = mt_rand(10 ,500);
+				$rand = mt_rand(10 ,1000);
 				break;
 
 			case $level < 30:
-				$rand = mt_rand(2 ,1000);
+				$rand = mt_rand(2 ,3000);
 				break;
 
 			default:
@@ -92,12 +92,11 @@ class Gatya
 				$p->sendMessage("§e超大あたり");
 				break;
 
-			case $rand > 250 && $rand < 260:
+			case $rand > 500 && $rand < 530:
 				$p->sendMessage("§e大あたり");
 				break;
 
-			case $rand > 20 && $rand < 250:
-			case $rand > 260 && $rand < 0:
+			case $rand > 20 && $rand < 500:
 				$p->sendMessage("§eあたり");
 				break;
 
@@ -257,7 +256,7 @@ class Gatya
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::FIRE_ASPECT), 10));
 				break;
 
-			case $rand > 10 && $rand < 30:
+			case $rand > 10 && $rand < 50:
 				$item = Item::get(Item::DIAMOND_PICKAXE);
 				$item->setCustomName("§dSllk§ePickaxe\n\n§2所有者 : " . $n);
 				$nbt = $item->getNamedTag();
@@ -270,7 +269,7 @@ class Gatya
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SILK_TOUCH), 1));
 				break;
 
-			case $rand > 30 && $rand < 50:
+			case $rand > 50 && $rand < 90:
 				$item = Item::get(Item::DIAMOND_SHOVEL);
 				$item->setCustomName("§dSllk§eShovel\n\n§2所有者 : " . $n);
 				$nbt = $item->getNamedTag();
@@ -283,7 +282,7 @@ class Gatya
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SILK_TOUCH), 1));
 				break;
 
-			case $rand > 50 && $rand < 70:
+			case $rand > 90 && $rand < 130:
 				$item = Item::get(Item::DIAMOND_AXE);
 				$item->setCustomName("§dSllk§eAxe\n\n§2所有者 : " . $n);
 				$nbt = $item->getNamedTag();
@@ -296,7 +295,7 @@ class Gatya
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SILK_TOUCH), 1));
 				break;
 
-			case $rand > 70 && $rand < 120:
+			case $rand > 130 && $rand < 230:
 				$item = Item::get(Item::DIAMOND_PICKAXE);
 				$item->setCustomName("§bSimple§ePickaxe\n\n§2所有者 : " . $n);
 				$nbt = $item->getNamedTag();
@@ -308,7 +307,7 @@ class Gatya
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 5));
 				break;
 
-			case $rand > 120 && $rand < 170:
+			case $rand > 230 && $rand < 330:
 				$item = Item::get(Item::DIAMOND_SHOVEL);
 				$item->setCustomName("§bSimple§eShovel\n\n§2所有者 : " . $n);
 				$nbt = $item->getNamedTag();
@@ -320,7 +319,7 @@ class Gatya
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING), 5));
 				break;
 
-			case $rand > 170 && $rand < 200:
+			case $rand > 330 && $rand < 360:
 				$item = Item::get(Item::IRON_PICKAXE, 245, 1);
 				$item->setCustomName("§eLucky§ePickaxe\n\n§2所有者 : " . $n);
 				$nbt = $item->getNamedTag();
@@ -333,12 +332,12 @@ class Gatya
 				$item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Gatya::ENCHANT_ADD_MANA), 10));
 				break;
 
-			case $rand > 200 && $rand < 250:
+			case $rand > 360 && $rand < 500:
 				$item = self::getGatya(self::APPLE2);
 				$item->setCount(mt_rand(1, 6));
 				break;
 
-			case $rand > 250 && $rand < 260:
+			case $rand > 500 && $rand < 530:
 				$item = self::getGatya(self::MAXAPPLE);
 				break;
 
