@@ -52,7 +52,7 @@ class EffectShop implements Form
 				$player->sendMessage(ReefAPI::BAD . '数値を入力してください');
 				return;
 			}
-			if ($data[0] <= 0)
+			if ($data[1] <= 0)
 			{
 				$player->sendMessage(ReefAPI::BAD . '数値を入力してください');
 				return;
