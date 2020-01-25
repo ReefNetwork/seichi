@@ -417,12 +417,11 @@ class main extends PluginBase implements listener
 								$gatya++;
 							} else {
 								$p->sendTip(ReefAPI::BAD . "インベントリがいっぱいです");
-								$p->sendMessage(ReefAPI::GOOD.$gatya.'回ガチャを引きました');
 								break;
 							}
-							$p->sendMessage(ReefAPI::GOOD.$gatya.'回ガチャを引きました');
-							break;
 						}
+						$p->sendMessage(ReefAPI::GOOD.$gatya.'回ガチャを引きました');
+						break;
 					}else{
 						$bool = Gatya::onGatya($p);
 						if ($bool) {
@@ -595,14 +594,14 @@ class main extends PluginBase implements listener
 		$pT = self::getpT($p->getName());
 		$skil = $pT->s_nowSkil;
 		$block = $p->getLevel()->getBlock($p->asVector3());
-		if (!ReefAPI::isProtect($block->asPosition() ,$p))
-		{
-			$p->addActionBarMessage(ReefAPI::BAD . "その場所のブロック変更することは出来ません");
-			return;
-		}
 
 		if ($skil::isWalkSkil())
 		{
+			if (!ReefAPI::isProtect($block->asPosition() ,$p))
+			{
+				$p->addActionBarMessage(ReefAPI::BAD . "その場所のブロック変更することは出来ません");
+				return;
+			}
 			if ($pT->s_coolTime !== 0) {
 				$p->sendTip(ReefAPI::BAD . 'スキルはクールタイム中です');
 				return;
