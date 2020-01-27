@@ -3,6 +3,7 @@
 namespace Ree\seichi\form;
 
 use Ree\seichi\main;
+use Ree\seichi\PlayerTask;
 
 class RankingForm implements \pocketmine\form\Form
 {
@@ -17,7 +18,6 @@ class RankingForm implements \pocketmine\form\Form
 	private $intlist;
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
 		$config = main::getData();
 		$array = main::getData()->getAll();
 		foreach (array_keys($array) as $key) {
@@ -25,7 +25,7 @@ class RankingForm implements \pocketmine\form\Form
 //			{
 				$data["level"] = $config->get($key)["level"];
 				$data["name"] = $key;
-				$int = 99999999999 - $config->get($key)["experience"];
+				$int = $config->get($key)["experience"];
 
 				$bool = isset($this->list[$int]);
 				while ($bool)
@@ -39,11 +39,18 @@ class RankingForm implements \pocketmine\form\Form
 		}
 		$i = 1;
 		$string = "";
-		sort($this->intlist);
+		rsort($this->intlist);
 		foreach ($this->intlist as $int)
 		{
 			$data = $this->list[$int];
-			$string = $string."§a".$i."位 : ".$data["level"]."レベル : §b".$data["name"]."\n";
+			if ($data["level"] >= 200)
+			{
+					$star = floor($int / PlayerTask::maxxp) - 1;
+					$star = '§e☆'.$star;
+			}else{
+				$star = '';
+			}
+			$string = $string."§a".$i."位 : ".$data["level"]."レベル : ".$star." §b".$data["name"]."\n";
 			$i++;
 		}
 
@@ -62,7 +69,6 @@ class RankingForm implements \pocketmine\form\Form
     public function handleResponse(\pocketmine\Player $p, $data): void
     {
         $pT = main::getpT($p->getName());
-        // TODO: Implement handleResponse() method.
         if ($data === NULL) {
             return;
         }

@@ -42,11 +42,14 @@ use Ree\StackStrage\ChestGuiManager;
 use Ree\StackStrage\StackStrage_API;
 use Ree\StackStrage\Virchal\StackStrage;
 use xenialdan\apibossbar\BossBar;
+use function Composer\Autoload\includeFile;
 
 class PlayerTask
 {
 	const objname = "sidebar";
 	const board = "board";
+
+	const maxxp = '26939000';
 
 	/**
 	 * @var Player
@@ -352,6 +355,10 @@ class PlayerTask
 
 			case 10:
 				return 6500;
+
+			case 200:
+				$star = floor($this->s_experience / self::maxxp) + 1;
+				return $star * self::maxxp;
 		}
 		$level = $this->s_level;
 		$old = 6500;
@@ -581,6 +588,18 @@ class PlayerTask
 		return $this->s_level;
 	}
 
+	public function getStar(): string
+	{
+		if ($this->s_level >= 200)
+		{
+			$star = floor($this->s_experience / self::maxxp - 1);
+			return '☆'.$star;
+		}else{
+			return '';
+		}
+
+	}
+
 	public function sendBar(): void
 	{
 		$bar = $this->bar;
@@ -649,7 +668,7 @@ class PlayerTask
 		$entry = new ScorePacketEntry();
 		$entry->objectiveName = self::board;
 		$entry->type = 3;
-		$entry->customName = "§8" . $data;
+		$entry->customName = "§8" . $data .'   '.$this->getPlayer()->getLevel()->getName();
 		$entry->score = 1;
 		$entry->scoreboardId = 1;
 		$pk->entries[1] = $entry;
@@ -657,7 +676,7 @@ class PlayerTask
 		$entry = new ScorePacketEntry();
 		$entry->objectiveName = self::board;
 		$entry->type = 3;
-		$entry->customName = "  レベル   :   " . $this->s_level;
+		$entry->customName = "  レベル   :   " .$this->getStar().'  '.$this->s_level;
 		$entry->score = 2;
 		$entry->scoreboardId = 2;
 		$pk->entries[2] = $entry;
