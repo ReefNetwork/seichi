@@ -45,6 +45,9 @@ class Gatya
 			default:
 				$rand = mt_rand(1 ,5000);
 		}
+		if ($rand == 1) {
+			$rand = mt_rand(1, 4);
+		}
 		if ($rand == 5) {
 			$rand = mt_rand(1, 10);
 		}
