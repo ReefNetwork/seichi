@@ -13,6 +13,20 @@ interface ISqliteHelper
 
 	/**
 	 * @param string $name
+	 * @param string $xuid
+	 * @param int $level
+	 * @param int $xp
+	 * @param array $skill
+	 * @param int $skillPoint
+	 * @param int $mana
+	 * @param float $coin
+	 * @param int $gatya
+	 * @return bool
+	 */
+	public function create(string $name, string $xuid, int $level = 0, int $xp = 0, array $skill = ['skil'], int $skillPoint = 0, int $mana = 0, float $coin = 10, int $gatya = 10): bool ;
+
+	/**
+	 * @param string $name
 	 * @return bool
 	 */
 	public function isExists(string $name): bool ;
@@ -111,4 +125,16 @@ interface ISqliteHelper
 	 * @return array
 	 */
 	public function getAllData(): array;
+
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	public function setXuid(string $name): bool ;
+
+	/**
+	 * @param string $name
+	 * @return string
+	 */
+	public function getXuid(string $name): string ;
 }
