@@ -33,9 +33,10 @@ interface ISqliteHelper
 
 	/**
 	 * @param string $name
+	 * @param int $level
 	 * @return bool
 	 */
-	public function setLevel(string $name): bool ;
+	public function setLevel(string $name, int $level): bool ;
 
 	/**
 	 * @param string $name
