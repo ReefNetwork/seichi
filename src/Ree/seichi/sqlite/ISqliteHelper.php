@@ -13,17 +13,17 @@ interface ISqliteHelper
 
 	/**
 	 * @param string $name
-	 * @param string $xuid
+	 * @param string|null $xuid
 	 * @param int $level
 	 * @param int $xp
 	 * @param array $skill
 	 * @param int $skillPoint
-	 * @param int $mana
+	 * @param float $mana
 	 * @param float $coin
 	 * @param int $gatya
 	 * @return bool
 	 */
-	public function create(string $name, string $xuid, int $level = 0, int $xp = 0, array $skill = ['skil'], int $skillPoint = 0, int $mana = 0, float $coin = 10, int $gatya = 10): bool ;
+	public function create(string $name, string $xuid = null, int $level = 0, int $xp = 0, array $skill = ['skil'], int $skillPoint = 0, float $mana = 0, float $coin = 10, int $gatya = 10): bool ;
 
 	/**
 	 * @param string $name
@@ -42,33 +42,33 @@ interface ISqliteHelper
 	 * @param string $name
 	 * @return int
 	 */
-	public function getLevel(string $name): int ;
+	public function getLevel(string $name): ?int ;
 
 	/**
 	 * @param string $name
 	 * @param array $skil
 	 * @return bool
 	 */
-	public function setSkil(string $name, array $skil): bool ;
+	public function setSkill(string $name, array $skil): bool ;
 
 	/**
 	 * @param string $name
 	 * @return array
 	 */
-	public function getSkil(string $name): array ;
+	public function getSkill(string $name): ?array ;
 
 	/**
 	 * @param string $name
 	 * @param int $point
 	 * @return bool
 	 */
-	public function setSkilPoint(string $name, int $point): bool ;
+	public function setSkillPoint(string $name, int $point): bool ;
 
 	/**
 	 * @param string $name
 	 * @return int
 	 */
-	public function getSkilPoint(string $name): int ;
+	public function getSkillPoint(string $name): ?int ;
 
 	/**
 	 * @param string $name
@@ -81,7 +81,7 @@ interface ISqliteHelper
 	 * @param string $name
 	 * @return float
 	 */
-	public function getMana(string $name): float ;
+	public function getMana(string $name): ?float ;
 
 	/**
 	 * @param string $name
@@ -94,7 +94,7 @@ interface ISqliteHelper
 	 * @param string $name
 	 * @return float
 	 */
-	public function getCoin(string $name): float ;
+	public function getCoin(string $name): ?float ;
 
 	/**
 	 * @param string $name
@@ -107,7 +107,7 @@ interface ISqliteHelper
 	 * @param string $name
 	 * @return int
 	 */
-	public function getExperience(string $name): int ;
+	public function getExperience(string $name): ?int ;
 
 	/**
 	 * @param string $name
@@ -120,7 +120,7 @@ interface ISqliteHelper
 	 * @param string $name
 	 * @return int
 	 */
-	public function getGatya(string $name): int ;
+	public function getGatya(string $name): ?int ;
 
 	/**
 	 * @return array
@@ -129,13 +129,20 @@ interface ISqliteHelper
 
 	/**
 	 * @param string $name
+	 * @param string $xuid
 	 * @return bool
 	 */
-	public function setXuid(string $name): bool ;
+	public function setXuid(string $name, string $xuid): bool ;
 
 	/**
 	 * @param string $name
 	 * @return string
 	 */
-	public function getXuid(string $name): string ;
+	public function getXuid(string $name): ?string ;
+
+	public function begin(): void ;
+
+	public function commit(): void ;
+
+	public function rollBack(): void ;
 }
