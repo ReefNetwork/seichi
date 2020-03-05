@@ -17,13 +17,14 @@ interface ISqliteHelper
 	 * @param int $level
 	 * @param int $xp
 	 * @param array $skill
+	 * @param string $nowSkill
 	 * @param int $skillPoint
 	 * @param float $mana
 	 * @param float $coin
 	 * @param int $gatya
 	 * @return bool
 	 */
-	public function create(string $name, string $xuid = null, int $level = 0, int $xp = 0, array $skill = ['skil'], int $skillPoint = 0, float $mana = 0, float $coin = 10, int $gatya = 10): bool ;
+	public function create(string $name, string $xuid = null, int $level = 0, int $xp = 0, array $skill = ['Skil'], string $nowSkill = 'Skil', int $skillPoint = 0, float $mana = 0, float $coin = 10, int $gatya = 10): bool ;
 
 	/**
 	 * @param string $name
@@ -56,6 +57,19 @@ interface ISqliteHelper
 	 * @return array
 	 */
 	public function getSkill(string $name): ?array ;
+
+	/**
+	 * @param string $name
+	 * @param string $skill
+	 * @return bool
+	 */
+	public function setNowSkill(string $name, string $skill): bool ;
+
+	/**
+	 * @param string $name
+	 * @return string|null
+	 */
+	public function getNowSkill(string $name): ?string ;
 
 	/**
 	 * @param string $name
@@ -145,4 +159,6 @@ interface ISqliteHelper
 	public function commit(): void ;
 
 	public function rollBack(): void ;
+
+	public function close(): void ;
 }
