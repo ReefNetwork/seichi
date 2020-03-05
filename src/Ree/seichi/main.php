@@ -42,6 +42,7 @@ use Ree\seichi\event\ChristmasGatya2019;
 use Ree\seichi\form\MenuForm;
 use Ree\seichi\skil\background\BreakMana;
 use Ree\seichi\skil\background\Fortune;
+use Ree\seichi\sqlite\SqliteHelper;
 use Ree\seichi\Task\CoolTimeTask;
 use Ree\seichi\Task\FlyTask;
 use Ree\seichi\Task\InventoryUpdateTask;
@@ -146,6 +147,8 @@ class main extends PluginBase implements listener
 			$p->kick(ReefAPI::ERROR . "サーバーが停止しました", false);
 			sleep(1);
 		}
+		SqliteHelper::getInstance()->commit();
+		SqliteHelper::getInstance()->close();
 		echo "seichi >> Complete\n";
 	}
 
@@ -154,23 +157,19 @@ class main extends PluginBase implements listener
 		$p = $ev->getPlayer();
 		$n = $p->getName();
 		$pT = new PlayerTask($p);
+		$db = SqliteHelper::getInstance();
 
-		if ($this->data->exists($n)) {
+		if ($db->isExists($n)) {
 			$pT->s_strage = $this->strage->get($n);
-			$pT->setData($this->data->get($n));
-
-			$pT->sendLog("plyaerデータを所得しました");
+			$pT->setData();
 		} else {
-			$p->addActionBarMessage("plyaerデータが見つからんかったためデータをデフォルトに適用します");
-			$pT->sendLog("plyaerデータが見つからんかったためデータをデフォルトに適用します");
+			$db->create($n, $p->getXuid());
 			$p->getInventory()->addItem(Item::get(Item::STICK)->setCustomName("メニュー"));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_PICKAXE));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_AXE));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_SHOVEL));
 			$p->getInventory()->addItem(Item::get(Item::BAKED_POTATO, 0, 8));
-			$pT->sendLog("初期装備が付与されました");
-			$pT->sendLog("Setting::[HIDE]ServerLog");
-			$p->sendMessage("SeverLogをhideにしました");
+			$p->sendMessage(ReefAPI::GOOD.'データベースへの登録が完了しました');
 		}
 		$this->pT[$n] = $pT;
 		$pT->task["InventoryUpdateTask"] = $this->getScheduler()->scheduleRepeatingTask(new InventoryUpdateTask($pT), 50)->getTaskId();
@@ -267,8 +266,6 @@ class main extends PluginBase implements listener
 			$ev->setCancelled();
 			return;
 		}
-
-		$pT->s_nowbreakEffect::onRun($pos);
 
 		if (in_array($ev->getBlock()->getId(), [16, 21, 56, 129, 153])) {
 			$add = Fortune::doFortune($item);
@@ -688,8 +685,7 @@ class main extends PluginBase implements listener
 		$n = $pT->getPlayer()->getName();
 
 		$this->strage->set($n, $pT->s_strage);
-		$this->data->set($n, $pT->getData());
 		$this->strage->save();
-		$this->data->save();
+		$pT->save();
 	}
 }
