@@ -35,6 +35,7 @@ use Ree\reef\ReefAPI;
 use Ree\seichi\form\SkilUnlockForm;
 use Ree\seichi\skil\background\BreakEffect;
 use Ree\seichi\skil\Skil;
+use Ree\seichi\sqlite\SqliteHelper;
 use Ree\seichi\Task\CoolTimeTask;
 use Ree\seichi\Task\ImmobileTask;
 use Ree\seichi\Task\TeleportTask;
@@ -252,35 +253,18 @@ class PlayerTask
 		$this->s_needxp = $this->getNeedxp();
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getData(): array
+	public function getData(): void
 	{
-		if ($this->save)
-		{
-			$data["level"] = $this->s_level;
-			$data["skil"] = $this->s_skil;
-			$data["breakEffect"] = $this->s_breakEffect;
-			$data["skilpoint"] = $this->s_skilpoint;
-			$data["mana"] = $this->s_mana;
-			$data["coin"] = $this->s_coin;
-			$data["experience"] = $this->s_experience;
-			$data["gatya"] = $this->s_gatya;
-
-			try {
-				$data["nowskil"] = $this->s_nowSkil::getClassName();
-//				$data["now_breakEffect"] = $this->s_nowbreakEffect::getClassName();
-			} catch (\Exception $ex) {
-				$data["nowskil"] = Skil::getClassName();
-				$data["now_breakEffect"] = BreakEffect::getClassName();
-				Server::getInstance()->broadcastMessage(ReefAPI::ERROR . "データ保存でエラーが発生しました");
-			}
-		}
-
-
-
-		return $data;
+		$db = SqliteHelper::getInstance();
+		$name = $this->getPlayer()->getName();
+		$db->setLevel($name, $this->s_level);
+		$db->setSkill($name, $this->s_skil);
+		$db->setSkillPoint($name, $this->s_skilpoint);
+		$db->setMana($name, $this->s_mana);
+		$db->setCoin($name, $this->s_coin);
+		$db->setExperience($name, $this->s_experience);
+		$db->setGatya($name, $this->s_gatya);
+		$db->setNowSkill($name, $this->s_nowSkil::getClassName());
 	}
 
 	/**
