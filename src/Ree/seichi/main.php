@@ -163,7 +163,7 @@ class main extends PluginBase implements listener
 			$pT->s_strage = $this->strage->get($n);
 			$pT->setData();
 		} else {
-			$db->create($n, $p->getXuid());
+			$db->create($p->getXuid(), $n);
 			$p->getInventory()->addItem(Item::get(Item::STICK)->setCustomName("メニュー"));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_PICKAXE));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_AXE));
