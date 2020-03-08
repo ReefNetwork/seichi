@@ -214,17 +214,17 @@ class PlayerTask
 	public function setData(): void
 	{
 		$db = SqliteHelper::getInstance();
-		$name = $this->getPlayer()->getName();
+		$xuid = $this->getPlayer()->getXuid();
 
-		$this->s_level = $db->getLevel($name);
-		$this->s_skil = $db->getSkill($name);
-		$this->s_skilpoint = $db->getSkillPoint($name);
-		$this->s_mana = $db->getMana($name);
-		$this->s_coin = $db->getCoin($name);
-		$this->s_experience = $db->getExperience($name);
-		$this->s_gatya = $db->getGatya($name);
+		$this->s_level = $db->getLevel($xuid);
+		$this->s_skil = $db->getSkill($xuid);
+		$this->s_skilpoint = $db->getSkillPoint($xuid);
+		$this->s_mana = $db->getMana($xuid);
+		$this->s_coin = $db->getCoin($xuid);
+		$this->s_experience = $db->getExperience($xuid);
+		$this->s_gatya = $db->getGatya($xuid);
 
-		$this->s_nowSkil = 'Ree\seichi\skil\\' . $db->getNowSkill($name);
+		$this->s_nowSkil = 'Ree\seichi\skil\\' . $db->getNowSkill($xuid);
 
 		$this->s_needxp = $this->getNeedxp();
 	}
@@ -232,16 +232,16 @@ class PlayerTask
 	public function save(): void
 	{
 		$db = SqliteHelper::getInstance();
-		$name = $this->getPlayer()->getName();
+		$xuid = $this->getPlayer()->getXuid();
 
-		$db->setLevel($name, $this->s_level);
-		$db->setSkill($name, $this->s_skil);
-		$db->setSkillPoint($name, $this->s_skilpoint);
-		$db->setMana($name, $this->s_mana);
-		$db->setCoin($name, $this->s_coin);
-		$db->setExperience($name, $this->s_experience);
-		$db->setGatya($name, $this->s_gatya);
-		$db->setNowSkill($name, $this->s_nowSkil::getClassName());
+		$db->setLevel($xuid, $this->s_level);
+		$db->setSkill($xuid, $this->s_skil);
+		$db->setSkillPoint($xuid, $this->s_skilpoint);
+		$db->setMana($xuid, $this->s_mana);
+		$db->setCoin($xuid, $this->s_coin);
+		$db->setExperience($xuid, $this->s_experience);
+		$db->setGatya($xuid, $this->s_gatya);
+		$db->setNowSkill($xuid, $this->s_nowSkil::getClassName());
 	}
 
 	/**
@@ -519,28 +519,6 @@ class PlayerTask
 //        $item = Item::get(Item::DRAGON_EGG, 0, 1);
 //        $item->setCustomName("同盟鯖");
 //        $p->getInventory()->setItem(34, $item);
-
-		for ($i = 0; $i <= 35; $i++) {
-			$item = $p->getInventory()->getItem($i);
-			$nbt = $item->getNamedTag();
-			if ($nbt->offsetExists(StackStrage_API::STRAGE)) {
-				if ($nbt->offsetExists(Gatya::GATYA)) {
-					$count = $item->getCount();
-					$data = $nbt->getInt(Gatya::GATYA);
-					$new = Gatya::getGatya($data, $p);
-					$new->setCount($count);
-					$p->getInventory()->setItem($i, $new);
-				} else {
-					$new = Item::get($item->getId(), $item->getDamage(), $item->getCount());
-					if ($item->hasEnchantments()) {
-						foreach ($item->getEnchantments() as $ench) {
-							$new->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment($ench->getId()), $ench->getLevel()));
-						}
-					}
-					$p->getInventory()->setItem($i, $new);
-				}
-			}
-		}
 	}
 
 	public function getLevel()

@@ -127,10 +127,8 @@ class SqliteHelper implements ISqliteHelper
 	 */
 	public function setMana(string $xuid, float $mana): bool
 	{
-		$name = strtolower($name);
-		$xuid = $this->getXuid($name);
 		$mana = round($mana, 2);
-		if (!$this->isExists($name)) return false;
+		if (!$this->isExists($xuid)) return false;
 		$stmt = self::$db->prepare('UPDATE data SET mana = :mana WHERE xuid = :xuid ');
 		$stmt->bindParam(':xuid', $xuid, SQLITE3_TEXT);
 		$stmt->bindValue(':mana', $mana, SQLITE3_FLOAT);
@@ -154,10 +152,8 @@ class SqliteHelper implements ISqliteHelper
 	 */
 	public function setCoin(string $xuid, string $coin): bool
 	{
-		$name = strtolower($name);
-		$xuid = $this->getXuid($name);
 		$coin = round($coin, 2);
-		if (!$this->isExists($name)) return false;
+		if (!$this->isExists($xuid)) return false;
 		$stmt = self::$db->prepare('UPDATE data SET coin = :coin WHERE xuid = :xuid ');
 		$stmt->bindParam(':xuid', $xuid, SQLITE3_TEXT);
 		$stmt->bindValue(':coin', $coin, SQLITE3_FLOAT);

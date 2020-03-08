@@ -125,12 +125,6 @@ class main extends PluginBase implements listener
 		Item::addCreativeItem($item);
 		$item = Gatya::getGatya(0);
 		Item::addCreativeItem($item);
-		for ($i = 1; $i <= 5; $i++) {
-			$item = ChristmasGatya2019::getGatya($i);
-			Item::addCreativeItem($item);
-		}
-		$item = ChristmasGatya2019::getGatya(0);
-		Item::addCreativeItem($item);
 
 		echo "Reef_core >> Complete\n";
 	}
