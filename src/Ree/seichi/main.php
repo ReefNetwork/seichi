@@ -60,9 +60,13 @@ class main extends PluginBase implements listener
 					$this->migrate($config->get($key), $xuid, $key);
 					echo 'データの引継ぎに成功しました name : '.$key.'  value: '.$xuid."\n";
 				} else {
-					$config->remove($key);
-					$config->save();
 					echo 'データの引継ぎに失敗しました name : '.$key.'  value: '.$xuid."\n";
+					$array = json_decode($xuid);
+					if ($array['error_code'] === 404) {
+						$config->remove($key);
+						$config->save();
+						echo 'データを削除しています...'."\n";
+					}
 				}
 			} else {
 				echo 'すでにデータが引き継がれています name : '.$key."\n";
