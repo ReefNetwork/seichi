@@ -8,7 +8,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use Ree\seichi\PlayerTask;
 
-class Skil
+class Skil2_2_3
 {
     /**
      * @var string[]
@@ -16,13 +16,6 @@ class Skil
     public const SKILLIST = [
         "Skil",
         "Skil_1_2_1",
-        "Skil_2_2_3",
-        "Skil_3_3_3",
-        "Skil_5_3_5",
-		"Skil_7_5_7",
-		"Skil_9_7_9",
-		"Skil_11_9_11",
-		"Ice_7_7_7",
     ];
 
     /**
@@ -48,7 +41,7 @@ class Skil
     /**
      * @return string
      */
-    public static function getName()
+    public function getName()
     {
         return "Default";
     }
@@ -56,20 +49,19 @@ class Skil
     /**
      * @return string
      */
-    public static function getClassName()
+    public function getClassName()
     {
         return "Skil";
     }
 
-	/**
-	 * @param Block $block
-	 * @param int $x
-	 * @param int $y
-	 * @param int $z
-	 * @param Player $p
-	 * @return Vector3[]
-	 */
-    public static function getSpace(Block $block,int $x ,int $y ,int $z ,Player $p)
+    /**
+     * @param Block $block
+     * @param $x
+     * @param $y
+     * @param $z
+     * @return Vector3 array
+     */
+    public function getSpace($block ,$x ,$y ,$z)
     {
         $space[]= $block->asVector3();
         return $space;
@@ -78,9 +70,17 @@ class Skil
     /**
      * @return int
      */
-    public static function getMana()
+    public function getMana()
     {
         return 0;
+    }
+
+    /**
+     * @return PlayerTask
+     */
+    public function getpT()
+    {
+        return $this->pT;
     }
 
     /**
@@ -110,37 +110,11 @@ class Skil
         return $item;
     }
 
-	/**
-	 * @return int
-	 */
-    public static function getCoolTime()
-	{
-		return 0;
-	}
-
-    public static function getNeedskil()
+    /**
+     * @param Vector3 $vector3
+     */
+    private function getDirection($vector3)
     {
-    	return Skil::getClassName();
+        return;
     }
-
-    public static function isWalkSkil(): bool
-	{
-		return false;
-	}
-
-	/**
-	 * @return null|Block
-	 */
-	public static function getTarget()
-	{
-		return null;
-	}
-
-	/**
-	 * @return Block
-	 */
-	public static function getChangeBlock(): Block
-	{
-		return Block::get(Block::AIR);
-	}
 }

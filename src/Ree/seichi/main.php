@@ -42,7 +42,6 @@ use Ree\seichi\event\ChristmasGatya2019;
 use Ree\seichi\form\MenuForm;
 use Ree\seichi\skil\background\BreakMana;
 use Ree\seichi\skil\background\Fortune;
-use Ree\seichi\sqlite\SqliteHelper;
 use Ree\seichi\Task\CoolTimeTask;
 use Ree\seichi\Task\FlyTask;
 use Ree\seichi\Task\InventoryUpdateTask;
@@ -125,6 +124,12 @@ class main extends PluginBase implements listener
 		Item::addCreativeItem($item);
 		$item = Gatya::getGatya(0);
 		Item::addCreativeItem($item);
+		for ($i = 1; $i <= 5; $i++) {
+			$item = ChristmasGatya2019::getGatya($i);
+			Item::addCreativeItem($item);
+		}
+		$item = ChristmasGatya2019::getGatya(0);
+		Item::addCreativeItem($item);
 
 		echo "Reef_core >> Complete\n";
 	}
@@ -141,8 +146,6 @@ class main extends PluginBase implements listener
 			$p->kick(ReefAPI::ERROR . "サーバーが停止しました", false);
 			sleep(1);
 		}
-		SqliteHelper::getInstance()->commit();
-		SqliteHelper::getInstance()->close();
 		echo "seichi >> Complete\n";
 	}
 
@@ -151,19 +154,23 @@ class main extends PluginBase implements listener
 		$p = $ev->getPlayer();
 		$n = $p->getName();
 		$pT = new PlayerTask($p);
-		$db = SqliteHelper::getInstance();
 
-		if ($db->isExists($n)) {
+		if ($this->data->exists($n)) {
 			$pT->s_strage = $this->strage->get($n);
-			$pT->setData();
+			$pT->setData($this->data->get($n));
+
+			$pT->sendLog("plyaerデータを所得しました");
 		} else {
-			$db->create($p->getXuid(), $n);
+			$p->addActionBarMessage("plyaerデータが見つからんかったためデータをデフォルトに適用します");
+			$pT->sendLog("plyaerデータが見つからんかったためデータをデフォルトに適用します");
 			$p->getInventory()->addItem(Item::get(Item::STICK)->setCustomName("メニュー"));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_PICKAXE));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_AXE));
 			$p->getInventory()->addItem(Item::get(Item::DIAMOND_SHOVEL));
 			$p->getInventory()->addItem(Item::get(Item::BAKED_POTATO, 0, 8));
-			$p->sendMessage(ReefAPI::GOOD.'データベースへの登録が完了しました');
+			$pT->sendLog("初期装備が付与されました");
+			$pT->sendLog("Setting::[HIDE]ServerLog");
+			$p->sendMessage("SeverLogをhideにしました");
 		}
 		$this->pT[$n] = $pT;
 		$pT->task["InventoryUpdateTask"] = $this->getScheduler()->scheduleRepeatingTask(new InventoryUpdateTask($pT), 50)->getTaskId();
@@ -260,6 +267,8 @@ class main extends PluginBase implements listener
 			$ev->setCancelled();
 			return;
 		}
+
+		$pT->s_nowbreakEffect::onRun($pos);
 
 		if (in_array($ev->getBlock()->getId(), [16, 21, 56, 129, 153])) {
 			$add = Fortune::doFortune($item);
@@ -679,7 +688,8 @@ class main extends PluginBase implements listener
 		$n = $pT->getPlayer()->getName();
 
 		$this->strage->set($n, $pT->s_strage);
+		$this->data->set($n, $pT->getData());
 		$this->strage->save();
-		$pT->save();
+		$this->data->save();
 	}
 }

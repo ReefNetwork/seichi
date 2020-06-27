@@ -35,7 +35,6 @@ use Ree\reef\ReefAPI;
 use Ree\seichi\form\SkilUnlockForm;
 use Ree\seichi\skil\background\BreakEffect;
 use Ree\seichi\skil\Skil;
-use Ree\seichi\sqlite\SqliteHelper;
 use Ree\seichi\Task\CoolTimeTask;
 use Ree\seichi\Task\ImmobileTask;
 use Ree\seichi\Task\TeleportTask;
@@ -211,37 +210,77 @@ class PlayerTask
 		return $this->p;
 	}
 
-	public function setData(): void
+	/**
+	 * @param array $data
+	 */
+	public function setData($data): void
 	{
-		$db = SqliteHelper::getInstance();
-		$xuid = $this->getPlayer()->getXuid();
+		$this->s_level = $data["level"];
+		$this->s_skil = $data["skil"];
+		$this->s_skilpoint = $data["skilpoint"];
+		$this->s_mana = $data["mana"];
+		$this->s_coin = $data["coin"];
+		$this->s_experience = $data["experience"];
+		$this->s_gatya = $data["gatya"];
 
-		$this->s_level = $db->getLevel($xuid);
-		$this->s_skil = $db->getSkill($xuid);
-		$this->s_skilpoint = $db->getSkillPoint($xuid);
-		$this->s_mana = $db->getMana($xuid);
-		$this->s_coin = $db->getCoin($xuid);
-		$this->s_experience = $db->getExperience($xuid);
-		$this->s_gatya = $db->getGatya($xuid);
+		if (isset ($data["breakEffect"])) {
+			$this->s_breakEffect = $data["breakEffect"];
+		}
+		if (isset ($data["now_breakEffect"])) {
+			$class = $data["now_breakEffect"];
+		} else {
+			$class = BreakEffect::getClassName();
+		}
+		$effect = 'Ree\seichi\skil\background\\' . $class;
+		if (!class_exists($effect)) {
+			$this->getPlayer()->sendMessage(ReefAPI::ERROR."1部セーブデータが破損しています");
+			$class = BreakEffect::getClassName();
+			$effect = 'Ree\seichi\skil\background\\' . $class;
+			$this->getPlayer()->sendMessage(ReefAPI::ERROR."セーブデータを修復しました1部設定がリセットされてる可能性があります");
+			if (!class_exists($effect))
+			{
+				$this->save = false;
+				$this->getPlayer()->kick(ReefAPI::ERROR."エラーが発生しました");
+			}
+		}
+		$this->s_nowbreakEffect = $effect;
 
-		$this->s_nowSkil = 'Ree\seichi\skil\\' . $db->getNowSkill($xuid);
+		$skil = $data["nowskil"];
+		$skil = 'Ree\seichi\skil\\' . $skil;
+		$this->s_nowSkil = $skil;
 
 		$this->s_needxp = $this->getNeedxp();
 	}
 
-	public function save(): void
+	/**
+	 * @return array
+	 */
+	public function getData(): array
 	{
-		$db = SqliteHelper::getInstance();
-		$xuid = $this->getPlayer()->getXuid();
+		if ($this->save)
+		{
+			$data["level"] = $this->s_level;
+			$data["skil"] = $this->s_skil;
+			$data["breakEffect"] = $this->s_breakEffect;
+			$data["skilpoint"] = $this->s_skilpoint;
+			$data["mana"] = $this->s_mana;
+			$data["coin"] = $this->s_coin;
+			$data["experience"] = $this->s_experience;
+			$data["gatya"] = $this->s_gatya;
 
-		$db->setLevel($xuid, $this->s_level);
-		$db->setSkill($xuid, $this->s_skil);
-		$db->setSkillPoint($xuid, $this->s_skilpoint);
-		$db->setMana($xuid, $this->s_mana);
-		$db->setCoin($xuid, $this->s_coin);
-		$db->setExperience($xuid, $this->s_experience);
-		$db->setGatya($xuid, $this->s_gatya);
-		$db->setNowSkill($xuid, $this->s_nowSkil::getClassName());
+			try {
+				$data["nowskil"] = $this->s_nowSkil::getClassName();
+//				$data["now_breakEffect"] = $this->s_nowbreakEffect::getClassName();
+			} catch (\Exception $ex) {
+				$data["nowskil"] = Skil::getClassName();
+				$data["now_breakEffect"] = BreakEffect::getClassName();
+				Server::getInstance()->broadcastMessage(ReefAPI::ERROR . "データ保存でエラーが発生しました");
+			}
+		}
+
+
+
+		return $data;
 	}
 
 	/**
@@ -346,7 +385,7 @@ class PlayerTask
 		$this->s_experience++;
 		if ($this->s_experience % 1000 == 0) {
 			$this->s_gatya++;
-			$this->getPlayer()->sendTip(ReefAPI::GOOD . "1000ブロック採掘したためガチャ券をゲットしました");
+			$this->getPlayer()->sendTip(ReefAPI::GOOD."1000ブロック採掘したためガチャ券をゲットしました");
 		}
 
 		$need = $this->getNeedxp();
@@ -354,12 +393,12 @@ class PlayerTask
 			$this->levelup();
 			$this->s_needxp = $this->getNeedxp();
 			$this->getPlayer()->sendMessage("levelupしてskilpointを手に入れました\nこれで最初のスキルをアンロックしてみましょう");
-			$this->getPlayer()->sendForm(new SkilUnlockForm($this->getPlayer(), 'levelupしてskilpointを手に入れました' . "\n" . 'これで最初のスキルをアンロックしてみましょう'));
+			$this->getPlayer()->sendForm(new SkilUnlockForm($this->getPlayer() ,'levelupしてskilpointを手に入れました'."\n".'これで最初のスキルをアンロックしてみましょう'));
 		}
 		if ($need <= $this->s_experience) {
 			if ($this->s_level >= 200) {
 				return;
-			}
+		}
 			$this->levelup();
 			$this->s_needxp = $this->getNeedxp();
 		}
@@ -373,7 +412,7 @@ class PlayerTask
 		$old = $this->s_level;
 		$this->s_level++;
 		$this->getPlayer()->addTitle("§eLevelUP §d" . $old . " -> §c" . $this->s_level, "§3Skilpoint§2を5手に入れました");
-		Server::getInstance()->broadcastMessage($this->getPlayer()->getName() . 'さんのレベルが' . $this->s_level . 'になりました');
+		Server::getInstance()->broadcastMessage($this->getPlayer()->getName().'さんのレベルが'.$this->s_level.'になりました');
 		$this->s_skilpoint = $this->s_skilpoint + 5;
 		$this->getPlayer()->setHealth($this->getPlayer()->getMaxHealth());
 		$this->getPlayer()->setFood($this->getPlayer()->getMaxFood());
@@ -389,9 +428,10 @@ class PlayerTask
 	{
 		if ($this->s_nowSkil) {
 			$skil = $this->s_nowSkil;
-			if ($this->s_nowSkil::getCoolTime()) {
+			if ($this->s_nowSkil::getCoolTime())
+			{
 				$this->s_coolTime = $this->s_nowSkil::getCoolTime();
-				main::getMain()->getScheduler()->scheduleDelayedTask(new CoolTimeTask($this), $this->s_nowSkil::getCoolTime());
+				main::getMain()->getScheduler()->scheduleDelayedTask(new CoolTimeTask($this) ,$this->s_nowSkil::getCoolTime());
 			}
 			$space = $this->s_nowSkil::getSpace($block, $block->getFloorX(), $block->getFloorY(), $block->getFloorZ(), $this->getPlayer());
 			$this->s_running = true;
@@ -519,6 +559,28 @@ class PlayerTask
 //        $item = Item::get(Item::DRAGON_EGG, 0, 1);
 //        $item->setCustomName("同盟鯖");
 //        $p->getInventory()->setItem(34, $item);
+
+		for ($i = 0; $i <= 35; $i++) {
+			$item = $p->getInventory()->getItem($i);
+			$nbt = $item->getNamedTag();
+			if ($nbt->offsetExists(StackStrage_API::STRAGE)) {
+				if ($nbt->offsetExists(Gatya::GATYA)) {
+					$count = $item->getCount();
+					$data = $nbt->getInt(Gatya::GATYA);
+					$new = Gatya::getGatya($data, $p);
+					$new->setCount($count);
+					$p->getInventory()->setItem($i, $new);
+				} else {
+					$new = Item::get($item->getId(), $item->getDamage(), $item->getCount());
+					if ($item->hasEnchantments()) {
+						foreach ($item->getEnchantments() as $ench) {
+							$new->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment($ench->getId()), $ench->getLevel()));
+						}
+					}
+					$p->getInventory()->setItem($i, $new);
+				}
+			}
+		}
 	}
 
 	public function getLevel()
@@ -528,10 +590,11 @@ class PlayerTask
 
 	public function getStar(): string
 	{
-		if ($this->s_level >= 200) {
+		if ($this->s_level >= 200)
+		{
 			$star = floor($this->s_experience / self::maxxp - 1);
-			return '☆' . $star;
-		} else {
+			return '☆'.$star;
+		}else{
 			return '';
 		}
 
@@ -605,7 +668,7 @@ class PlayerTask
 		$entry = new ScorePacketEntry();
 		$entry->objectiveName = self::board;
 		$entry->type = 3;
-		$entry->customName = "§8" . $data . '   ' . $this->getPlayer()->getLevel()->getName();
+		$entry->customName = "§8" . $data .'   '.$this->getPlayer()->getLevel()->getName();
 		$entry->score = 1;
 		$entry->scoreboardId = 1;
 		$pk->entries[1] = $entry;
@@ -613,7 +676,7 @@ class PlayerTask
 		$entry = new ScorePacketEntry();
 		$entry->objectiveName = self::board;
 		$entry->type = 3;
-		$entry->customName = "  レベル   :   " . $this->getStar() . '  ' . $this->s_level;
+		$entry->customName = "  レベル   :   " .$this->getStar().'  '.$this->s_level;
 		$entry->score = 2;
 		$entry->scoreboardId = 2;
 		$pk->entries[2] = $entry;
